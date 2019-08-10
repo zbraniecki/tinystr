@@ -33,7 +33,7 @@ Details
 
 It provides two structs:
  * `TinyStr4` an ASCII-only string limited to 4 characters.
- * `TinyStr4` an ASCII-only string limited to 8 characters.
+ * `TinyStr8` an ASCII-only string limited to 8 characters.
 
 It performs a very tailored set of operations
  * to_ascii_lowercase
