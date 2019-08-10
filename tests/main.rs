@@ -1,3 +1,4 @@
+use std::fmt::Write;
 use std::ops::Deref;
 use tinystr::{Error, TinyStr4, TinyStr8};
 
@@ -21,6 +22,15 @@ fn tiny4_size() {
 #[test]
 fn tiny4_null() {
     assert_eq!("a\u{0}b".parse::<TinyStr4>(), Err(Error::InvalidNull));
+}
+
+#[test]
+fn tiny4_new_unchecked() {
+    let reference: TinyStr4 = "en".parse().unwrap();
+    let uval: u32 = reference.into();
+    let s = unsafe { TinyStr4::new_unchecked(uval) };
+    assert_eq!(s, reference);
+    assert_eq!(s, "en");
 }
 
 #[test]
@@ -83,6 +93,40 @@ fn tiny4_titlecase() {
 }
 
 #[test]
+fn tiny4_ord() {
+    let mut v: Vec<TinyStr4> = vec!["zh".parse().unwrap(), "fr".parse().unwrap()];
+    v.sort();
+
+    assert_eq!(v.get(0).unwrap().as_str(), "fr");
+    assert_eq!(v.get(1).unwrap().as_str(), "zh");
+}
+
+#[test]
+fn tiny4_eq() {
+    let s1: TinyStr4 = "en".parse().unwrap();
+    let s2: TinyStr4 = "fr".parse().unwrap();
+    let s3: TinyStr4 = "en".parse().unwrap();
+
+    assert_eq!(s1, s3);
+    assert_ne!(s1, s2);
+}
+
+#[test]
+fn tiny4_display() {
+    let s: TinyStr4 = "abcd".parse().unwrap();
+    let mut result = String::new();
+    write!(result, "{}", s).unwrap();
+    assert_eq!(result, "abcd");
+    assert_eq!(format!("{}", s), "abcd");
+}
+
+#[test]
+fn tiny4_debug() {
+    let s: TinyStr4 = "abcd".parse().unwrap();
+    assert_eq!(format!("{:#?}", s), "\"abcd\"");
+}
+
+#[test]
 fn tiny8_basic() {
     let s: TinyStr8 = "abcde".parse().unwrap();
     assert_eq!(s.deref(), "abcde");
@@ -105,6 +149,15 @@ fn tiny8_size() {
 #[test]
 fn tiny8_null() {
     assert_eq!("a\u{0}b".parse::<TinyStr8>(), Err(Error::InvalidNull));
+}
+
+#[test]
+fn tiny8_new_unchecked() {
+    let reference: TinyStr8 = "Windows".parse().unwrap();
+    let uval: u64 = reference.into();
+    let s = unsafe { TinyStr8::new_unchecked(uval) };
+    assert_eq!(s, reference);
+    assert_eq!(s, "Windows");
 }
 
 #[test]
@@ -132,4 +185,29 @@ fn tiny8_ord() {
 
     assert_eq!(v.get(0).unwrap().as_str(), "macos");
     assert_eq!(v.get(1).unwrap().as_str(), "nedis");
+}
+
+#[test]
+fn tiny8_eq() {
+    let s1: TinyStr8 = "windows".parse().unwrap();
+    let s2: TinyStr8 = "mac".parse().unwrap();
+    let s3: TinyStr8 = "windows".parse().unwrap();
+
+    assert_eq!(s1, s3);
+    assert_ne!(s1, s2);
+}
+
+#[test]
+fn tiny8_display() {
+    let s: TinyStr8 = "abcdef".parse().unwrap();
+    let mut result = String::new();
+    write!(result, "{}", s).unwrap();
+    assert_eq!(result, "abcdef");
+    assert_eq!(format!("{}", s), "abcdef");
+}
+
+#[test]
+fn tiny8_debug() {
+    let s: TinyStr8 = "abcdef".parse().unwrap();
+    assert_eq!(format!("{:#?}", s), "\"abcdef\"");
 }
