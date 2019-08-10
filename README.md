@@ -46,55 +46,7 @@ This set is sufficient for certain classes of uses such as `unic-langid` librari
 Performance
 -----------
 
-For those uses, TinyStr provides performance superior to regular `String`:
-
-###### FromStr
-
-* 4 char max:
-  * String: 1.0779 us
-  * TinyStr4: 47.836 ns
-  * TinyStr8: 127.37 ns
-* 8 char max:
-  * String: 1.0864 us
-  * TinyStr8: 130.99 ns
-
-###### to_ascii_lowercase
-
-* 4 char max:
-  * String: 1.1313 us
-  * TinyStr4: 20.164 ns
-  * TinyStr8: 28.205 ns
-* 8 char max:
-  * String: 1.1442 us
-  * TinyStr8: 28.211 ns
-
-###### to_ascii_uppercase
-
-* 4 char max:
-  * String: 1.1282 us
-  * TinyStr4: 20.982 ns
-  * TinyStr8: 24.347 ns
-* 8 char max:
-  * String: 1.1420 us
-  * TinyStr8: 24.327 ns
-
-###### to_ascii_titlecase
-
-* 4 char max:
-  * String: 1.1487 us
-  * TinyStr4: 24.566 ns
-
-###### is_ascii_alphanumeric
-
-* 4 char max:
-  * String: 35.767 ns
-  * TinyStr4: 21.027 ns
-  * TinyStr8: 32.094 ns
-* 8 char max:
-  * String: 45.881 ns
-  * TinyStr8: 32.094 ns
-
-Performance has been tested on MacBook Pro 2017, using Rust 1.36 and tinystr 0.1.0.
+For those uses, TinyStr provides [performance characteristic](https://github.com/zbraniecki/tinystr/wiki/Performance) much better than the regular `String`.
 
 Status
 ------
