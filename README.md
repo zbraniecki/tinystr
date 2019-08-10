@@ -35,7 +35,7 @@ It provides two structs:
  * `TinyStr4` an ASCII-only string limited to 4 characters.
  * `TinyStr8` an ASCII-only string limited to 8 characters.
 
-It performs a very tailored set of operations
+The crate stores them as `u32`/`u64` and uses bitmasking to provide basic string manipulation operations:
  * to_ascii_lowercase
  * to_ascii_uppercase
  * to_ascii_titlecase (TinyStr4 only)
