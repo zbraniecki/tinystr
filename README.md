@@ -1,4 +1,4 @@
-# tinystr [![crates.io](http://meritbadge.herokuapp.com/trinystr)](https://crates.io/crates/tinystr)[![Build Status](https://travis-ci.org/zbraniecki/tinystr.svg?branch=master)](https://travis-ci.org/zbraniecki/tinystr) [![Coverage Status](https://coveralls.io/repos/github/zbraniecki/tinystr/badge.svg?branch=master)](https://coveralls.io/github/zbraniecki/tinystr?branch=master)
+# tinystr [![crates.io](http://meritbadge.herokuapp.com/tinystr)](https://crates.io/crates/tinystr)[![Build Status](https://travis-ci.org/zbraniecki/tinystr.svg?branch=master)](https://travis-ci.org/zbraniecki/tinystr) [![Coverage Status](https://coveralls.io/repos/github/zbraniecki/tinystr/badge.svg?branch=master)](https://coveralls.io/github/zbraniecki/tinystr?branch=master)
 
 `tinystr` is a small ASCII-only bounded length string representation.
 
