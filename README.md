@@ -46,7 +46,7 @@ This set is sufficient for certain classes of uses such as `unic-langid` librari
 Performance
 -----------
 
-For those uses, TinyStr provides [performance characteristic](https://github.com/zbraniecki/tinystr/wiki/Performance) much better than the regular `String`.
+For those uses, TinyStr provides [performance characteristics](https://github.com/zbraniecki/tinystr/wiki/Performance) much better than the regular `String`.
 
 Status
 ------
