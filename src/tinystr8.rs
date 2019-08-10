@@ -13,11 +13,12 @@ use crate::Error;
 pub struct TinyStr8(NonZeroU64);
 
 impl TinyStr8 {
+    #[inline(always)]
     pub const unsafe fn new_unchecked(text: u64) -> Self {
         Self(NonZeroU64::new_unchecked(u64::from_le(text)))
     }
 
-    #[inline]
+    #[inline(always)]
     pub fn as_str(&self) -> &str {
         self.deref()
     }
@@ -65,7 +66,7 @@ impl fmt::Debug for TinyStr8 {
 impl Deref for TinyStr8 {
     type Target = str;
 
-    #[inline]
+    #[inline(always)]
     fn deref(&self) -> &str {
         // Again, could use #cfg to hand-roll a big-endian implementation.
         let word = self.0.get().to_le();
@@ -98,6 +99,7 @@ impl Ord for TinyStr8 {
 impl FromStr for TinyStr8 {
     type Err = Error;
 
+    #[inline(always)]
     fn from_str(text: &str) -> Result<Self, Self::Err> {
         let len = text.len();
         if len < 1 || len > 8 {

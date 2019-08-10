@@ -3,6 +3,7 @@ use std::ptr::copy_nonoverlapping;
 
 use super::Error;
 
+#[inline(always)]
 pub(crate) unsafe fn make_4byte_str(
     text: &str,
     len: usize,
