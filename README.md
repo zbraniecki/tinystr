@@ -40,6 +40,7 @@ The crate stores them as `u32`/`u64` and uses bitmasking to provide basic string
  * to_ascii_uppercase
  * to_ascii_titlecase (TinyStr4 only)
  * is_ascii_alphanumeric
+ * PartialEq
 
 This set is sufficient for certain classes of uses such as `unic-langid` libraries.
 
