@@ -1,6 +1,6 @@
 use std::fmt::Write;
 use std::ops::Deref;
-use tinystr::{Error, TinyStr4, TinyStr8};
+use tinystr::{Error, TinyStr4, TinyStr8, TinyStr16};
 
 #[test]
 fn tiny4_basic() {
@@ -210,4 +210,92 @@ fn tiny8_display() {
 fn tiny8_debug() {
     let s: TinyStr8 = "abcdef".parse().unwrap();
     assert_eq!(format!("{:#?}", s), "\"abcdef\"");
+}
+
+#[test]
+fn tiny16_size() {
+    assert_eq!("".parse::<TinyStr16>(), Err(Error::InvalidSize));
+    assert!("1".parse::<TinyStr16>().is_ok());
+    assert!("12".parse::<TinyStr16>().is_ok());
+    assert!("123".parse::<TinyStr16>().is_ok());
+    assert!("1234".parse::<TinyStr16>().is_ok());
+    assert!("12345".parse::<TinyStr16>().is_ok());
+    assert!("123456".parse::<TinyStr16>().is_ok());
+    assert!("1234567".parse::<TinyStr16>().is_ok());
+    assert!("12345678".parse::<TinyStr16>().is_ok());
+    assert!("123456781".parse::<TinyStr16>().is_ok());
+    assert!("1234567812".parse::<TinyStr16>().is_ok());
+    assert!("12345678123".parse::<TinyStr16>().is_ok());
+    assert!("123456781234".parse::<TinyStr16>().is_ok());
+    assert!("1234567812345".parse::<TinyStr16>().is_ok());
+    assert!("12345678123456".parse::<TinyStr16>().is_ok());
+    assert!("123456781234567".parse::<TinyStr16>().is_ok());
+    assert!("1234567812345678".parse::<TinyStr16>().is_ok());
+    assert_eq!("12345678123456789".parse::<TinyStr16>(), Err(Error::InvalidSize));
+}
+
+#[test]
+fn tiny16_null() {
+    assert_eq!("a\u{0}b".parse::<TinyStr16>(), Err(Error::InvalidNull));
+}
+
+#[test]
+fn tiny16_new_unchecked() {
+    let reference: TinyStr16 = "WindowsCE/ME/NT".parse().unwrap();
+    let uval: u128 = reference.into();
+    let s = unsafe { TinyStr16::new_unchecked(uval) };
+    assert_eq!(s, reference);
+    assert_eq!(s, "WindowsCE/ME/NT");
+}
+
+#[test]
+fn tiny16_nonascii() {
+    assert_eq!("\u{4000}".parse::<TinyStr16>(), Err(Error::NonAscii));
+}
+
+#[test]
+fn tiny16_alpha() {
+    let s: TinyStr16 = "@abcdefgTUVWXYZ[".parse().unwrap();
+    assert!(!s.is_ascii_alphanumeric());
+    assert_eq!(s.to_ascii_uppercase().as_str(), "@ABCDEFGTUVWXYZ[");
+    assert_eq!(s.to_ascii_lowercase().as_str(), "@abcdefgtuvwxyz[");
+
+    assert!("abcdefgTUVWXYZ"
+        .parse::<TinyStr16>()
+        .unwrap()
+        .is_ascii_alphanumeric());
+}
+
+#[test]
+fn tiny16_ord() {
+    let mut v: Vec<TinyStr16> = vec!["nedis_xxxx".parse().unwrap(), "macos_xxxx".parse().unwrap()];
+    v.sort();
+
+    assert_eq!(v.get(0).unwrap().as_str(), "macos_xxxx");
+    assert_eq!(v.get(1).unwrap().as_str(), "nedis_xxxx");
+}
+
+#[test]
+fn tiny16_eq() {
+    let s1: TinyStr16 = "windows98SE".parse().unwrap();
+    let s2: TinyStr16 = "mac".parse().unwrap();
+    let s3: TinyStr16 = "windows98SE".parse().unwrap();
+
+    assert_eq!(s1, s3);
+    assert_ne!(s1, s2);
+}
+
+#[test]
+fn tiny16_display() {
+    let s: TinyStr16 = "abcdefghijkl".parse().unwrap();
+    let mut result = String::new();
+    write!(result, "{}", s).unwrap();
+    assert_eq!(result, "abcdefghijkl");
+    assert_eq!(format!("{}", s), "abcdefghijkl");
+}
+
+#[test]
+fn tiny16_debug() {
+    let s: TinyStr16 = "abcdefghijkl".parse().unwrap();
+    assert_eq!(format!("{:#?}", s), "\"abcdefghijkl\"");
 }
