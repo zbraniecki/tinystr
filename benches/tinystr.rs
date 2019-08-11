@@ -17,323 +17,234 @@ static STRINGS_8: &[&str] = &[
 ];
 
 fn construct_from_str(c: &mut Criterion) {
-    fn from_str_test<R: std::str::FromStr>(b: &mut Bencher, strings: &Vec<&str>)
-    where
-        <R as std::str::FromStr>::Err: std::fmt::Debug,
-    {
-        b.iter(|| {
-            for s in strings {
-                let _: R = black_box(s).parse().unwrap();
+    macro_rules! cfs {
+        ($r:ty) => {
+            |b: &mut Bencher, strings: &Vec<&str>| { 
+                b.iter(|| {
+                    for s in strings {
+                        let _: $r = black_box(s.parse().unwrap());
+                    }
+                })
             }
-        })
+        };
     };
 
     let funcs = vec![
-        Fun::new("String", from_str_test::<String>),
-        Fun::new("TinyStr4", from_str_test::<TinyStr4>),
-        Fun::new("TinyStr8", from_str_test::<TinyStr8>),
+        Fun::new("String", cfs!(String)),
+        Fun::new("TinyStr4", cfs!(TinyStr4)),
+        Fun::new("TinyStr8", cfs!(TinyStr8)),
     ];
 
     c.bench_functions("construct_from_str/4", funcs, STRINGS_4.to_vec());
 
     let funcs = vec![
-        Fun::new("String", from_str_test::<String>),
-        Fun::new("TinyStr8", from_str_test::<TinyStr8>),
+        Fun::new("String", cfs!(String)),
+        Fun::new("TinyStr8", cfs!(TinyStr8)),
     ];
 
     c.bench_functions("construct_from_str/8", funcs, STRINGS_8.to_vec());
 }
 
 fn construct_unchecked(c: &mut Criterion) {
+    macro_rules! cu {
+        ($tty:ty, $rty:ty) => {
+            |b, inputs: &Vec<&str>| {
+                let raw: Vec<$rty> = inputs
+                    .iter()
+                    .map(|s| s.parse::<$tty>().unwrap().into())
+                    .collect();
+                b.iter(move || {
+                    for num in &raw {
+                        let _ = unsafe { <$tty>::new_unchecked(black_box(*num)) };
+                    }
+                })
+            }
+        };
+    };
+
     let funcs = vec![
-        Fun::new("TinyStr4", |b, inputs: &Vec<&str>| {
-            let raw: Vec<u32> = inputs
-                .iter()
-                .map(|s| s.parse::<TinyStr4>().unwrap().into())
-                .collect();
-            b.iter(move || {
-                for num in &raw {
-                    let _ = unsafe { TinyStr4::new_unchecked(black_box(*num)) };
-                }
-            })
-        }),
-        Fun::new("TinyStr8", |b, inputs: &Vec<&str>| {
-            let raw: Vec<u64> = inputs
-                .iter()
-                .map(|s| s.parse::<TinyStr8>().unwrap().into())
-                .collect();
-            b.iter(move || {
-                for num in &raw {
-                    let _ = unsafe { TinyStr8::new_unchecked(black_box(*num)) };
-                }
-            })
-        }),
+        Fun::new("TinyStr4", cu!(TinyStr4, u32)),
     ];
 
     c.bench_functions("construct_unchecked/4", funcs, STRINGS_4.to_vec());
 
-    let funcs = vec![Fun::new("TinyStr8", |b, inputs: &Vec<&str>| {
-        let raw: Vec<u64> = inputs
-            .iter()
-            .map(|s| s.parse::<TinyStr8>().unwrap().into())
-            .collect();
-        b.iter(move || {
-            for num in &raw {
-                let _ = unsafe { TinyStr8::new_unchecked(black_box(*num)) };
-            }
-        })
-    })];
+    let funcs = vec![
+        Fun::new("TinyStr8", cu!(TinyStr8, u64)),
+    ];
 
     c.bench_functions("construct_unchecked/8", funcs, STRINGS_8.to_vec());
 }
 
+macro_rules! convert_to_ascii {
+    ($ty:ty, $action:ident) => {
+        |b: &mut Bencher, inputs: &Vec<&str>| {
+            let raw: Vec<$ty> = inputs
+                .iter()
+                .map(|s| s.parse::<$ty>().unwrap())
+                .collect();
+            b.iter(move || {
+                for s in &raw {
+                    let _ = black_box(s.$action());
+                }
+            })
+        }
+    };
+}
+
 fn convert_to_ascii_lowercase(c: &mut Criterion) {
-    let string_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<String> = inputs
-            .iter()
-            .map(|s| s.parse::<String>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                let _ = s.to_ascii_lowercase();
-            }
-        })
-    };
-    let tinystr4_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<TinyStr4> = inputs
-            .iter()
-            .map(|s| s.parse::<TinyStr4>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                let _ = s.to_ascii_lowercase();
-            }
-        })
-    };
-    let tinystr8_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<TinyStr8> = inputs
-            .iter()
-            .map(|s| s.parse::<TinyStr8>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                let _ = s.to_ascii_lowercase();
-            }
-        })
-    };
+    macro_rules! ctal {
+        ($ty:ty) => {convert_to_ascii!($ty, to_ascii_lowercase)};
+    }
 
     c.bench_functions(
         "convert_to_ascii_lowercase/4",
         vec![
-            Fun::new("String", string_fn.clone()),
-            Fun::new("TinyStr4", tinystr4_fn.clone()),
-            Fun::new("TinyStr8", tinystr8_fn.clone()),
+            Fun::new("String", ctal!(String)),
+            Fun::new("TinyStr4", ctal!(TinyStr4)),
+            Fun::new("TinyStr8", ctal!(TinyStr8))
         ],
         STRINGS_4.to_vec(),
     );
     c.bench_functions(
         "convert_to_ascii_lowercase/8",
         vec![
-            Fun::new("String", string_fn.clone()),
-            Fun::new("TinyStr8", tinystr8_fn.clone()),
+            Fun::new("String", ctal!(String)),
+            Fun::new("TinyStr8", ctal!(TinyStr8)),
         ],
         STRINGS_8.to_vec(),
     );
 }
 
 fn convert_to_ascii_uppercase(c: &mut Criterion) {
-    let string_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<String> = inputs
-            .iter()
-            .map(|s| s.parse::<String>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                let _ = s.to_ascii_uppercase();
-            }
-        })
-    };
-    let tinystr4_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<TinyStr4> = inputs
-            .iter()
-            .map(|s| s.parse::<TinyStr4>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                let _ = s.to_ascii_uppercase();
-            }
-        })
-    };
-    let tinystr8_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<TinyStr8> = inputs
-            .iter()
-            .map(|s| s.parse::<TinyStr8>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                let _ = s.to_ascii_uppercase();
-            }
-        })
-    };
+    macro_rules! ctau {
+        ($ty:ty) => {convert_to_ascii!($ty, to_ascii_uppercase)};
+    }
 
     c.bench_functions(
         "convert_to_ascii_uppercase/4",
         vec![
-            Fun::new("String", string_fn.clone()),
-            Fun::new("TinyStr4", tinystr4_fn.clone()),
-            Fun::new("TinyStr8", tinystr8_fn.clone()),
+            Fun::new("String", ctau!(String)),
+            Fun::new("TinyStr4", ctau!(TinyStr4)),
+            Fun::new("TinyStr8", ctau!(TinyStr8))
         ],
         STRINGS_4.to_vec(),
     );
     c.bench_functions(
         "convert_to_ascii_uppercase/8",
         vec![
-            Fun::new("String", string_fn.clone()),
-            Fun::new("TinyStr8", tinystr8_fn.clone()),
+            Fun::new("String", ctau!(String)),
+            Fun::new("TinyStr8", ctau!(TinyStr8))
         ],
         STRINGS_8.to_vec(),
     );
 }
 
-fn convert_to_ascii_titlecase(c: &mut Criterion) {
-    let funcs = vec![
-        Fun::new("String", |b, inputs: &Vec<&str>| {
-            let raw: Vec<String> = inputs
-                .iter()
-                .map(|s| s.parse::<String>().unwrap())
-                .collect();
-            b.iter(move || {
-                for s in &raw {
-                    let mut result = s.to_ascii_lowercase();
-                    result[0..1].make_ascii_uppercase();
-                }
-            })
-        }),
-        Fun::new("TinyStr4", |b, inputs: &Vec<&str>| {
-            let raw: Vec<TinyStr4> = inputs
-                .iter()
-                .map(|s| s.parse::<TinyStr4>().unwrap())
-                .collect();
-            b.iter(move || {
-                for s in &raw {
-                    let _ = s.to_ascii_titlecase();
-                }
-            })
-        }),
-    ];
+trait ExtToAsciiTitlecase {
+    #[inline(always)]
+    fn to_ascii_titlecase(&self) -> String;
+}
 
-    c.bench_functions("convert_to_ascii_titlecase/4", funcs, STRINGS_4.to_vec());
+impl ExtToAsciiTitlecase for str {
+    fn to_ascii_titlecase(&self) -> String {
+        let mut result = self.to_ascii_lowercase();
+        result[0..1].make_ascii_uppercase();
+        result
+    }
+}
+
+fn convert_to_ascii_titlecase(c: &mut Criterion) {
+    macro_rules! ctat {
+        ($ty:ty) => {convert_to_ascii!($ty, to_ascii_titlecase)};
+    }
+
+    c.bench_functions(
+        "convert_to_ascii_titlecase/4",
+        vec![
+            Fun::new("String", ctat!(String)),
+            Fun::new("TinyStr4", ctat!(TinyStr4)),
+            Fun::new("TinyStr8", ctat!(TinyStr8))
+        ],
+        STRINGS_4.to_vec(),
+    );
+    c.bench_functions(
+        "convert_to_ascii_titlecase/8",
+        vec![
+            Fun::new("String", ctat!(String)),
+            Fun::new("TinyStr8", ctat!(TinyStr8))
+        ],
+        STRINGS_8.to_vec(),
+    );
 }
 
 fn test_is_ascii_alphanumeric(c: &mut Criterion) {
-    let string_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<String> = inputs
-            .iter()
-            .map(|s| s.parse::<String>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                let _ = s.chars().all(|c| c.is_ascii_alphanumeric());
+    macro_rules! tiaa {
+        ($ty:ty) => {
+            |b: &mut Bencher, inputs: &Vec<&str>| {
+                let raw: Vec<$ty> = inputs
+                    .iter()
+                    .map(|s| s.parse::<$ty>().unwrap())
+                    .collect();
+                b.iter(move || {
+                    for s in &raw {
+                        let _ = black_box(s.chars().all(|c| c.is_ascii_alphanumeric()));
+                    }
+                })
             }
-        })
-    };
-    let tinystr4_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<TinyStr4> = inputs
-            .iter()
-            .map(|s| s.parse::<TinyStr4>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                let _ = s.is_ascii_alphanumeric();
-            }
-        })
-    };
-    let tinystr8_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<TinyStr8> = inputs
-            .iter()
-            .map(|s| s.parse::<TinyStr8>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                let _ = s.is_ascii_alphanumeric();
-            }
-        })
-    };
+        };
+    }
 
     c.bench_functions(
         "test_is_ascii_alphanumeric/4",
         vec![
-            Fun::new("String", string_fn.clone()),
-            Fun::new("TinyStr4", tinystr4_fn.clone()),
-            Fun::new("TinyStr8", tinystr8_fn.clone()),
+            Fun::new("String", tiaa!(String)),
+            Fun::new("TinyStr4", tiaa!(TinyStr4)),
+            Fun::new("TinyStr8", tiaa!(TinyStr8)),
         ],
         STRINGS_4.to_vec(),
     );
     c.bench_functions(
         "test_is_ascii_alphanumeric/8",
         vec![
-            Fun::new("String", string_fn.clone()),
-            Fun::new("TinyStr8", tinystr8_fn.clone()),
+            Fun::new("String", tiaa!(String)),
+            Fun::new("TinyStr8", tiaa!(TinyStr8)),
         ],
         STRINGS_8.to_vec(),
     );
 }
 
 fn test_eq(c: &mut Criterion) {
-    let string_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<String> = inputs
-            .iter()
-            .map(|s| s.parse::<String>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                for l in &raw {
-                    let _ = black_box(s == l);
-                }
+    macro_rules! te {
+        ($ty:ty) => {
+            |b: &mut Bencher, inputs: &Vec<&str>| {
+                let raw: Vec<$ty> = inputs
+                    .iter()
+                    .map(|s| s.parse::<$ty>().unwrap())
+                    .collect();
+                b.iter(move || {
+                    for s in &raw {
+                        for l in &raw {
+                            let _ = black_box(s == l);
+                        }
+                    }
+                })
             }
-        })
-    };
-    let tinystr4_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<TinyStr4> = inputs
-            .iter()
-            .map(|s| s.parse::<TinyStr4>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                for l in &raw {
-                    let _ = black_box(s == l);
-                }
-            }
-        })
-    };
-    let tinystr8_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
-        let raw: Vec<TinyStr8> = inputs
-            .iter()
-            .map(|s| s.parse::<TinyStr8>().unwrap())
-            .collect();
-        b.iter(move || {
-            for s in &raw {
-                for l in &raw {
-                    let _ = black_box(s == l);
-                }
-            }
-        })
-    };
+        };
+    }
 
     c.bench_functions(
         "test_eq/4",
         vec![
-            Fun::new("String", string_fn.clone()),
-            Fun::new("TinyStr4", tinystr4_fn.clone()),
-            Fun::new("TinyStr8", tinystr8_fn.clone()),
+            Fun::new("String", te!(String)),
+            Fun::new("TinyStr4", te!(TinyStr4)),
+            Fun::new("TinyStr8", te!(TinyStr8)),
         ],
         STRINGS_4.to_vec(),
     );
     c.bench_functions(
         "test_eq/8",
         vec![
-            Fun::new("String", string_fn.clone()),
-            Fun::new("TinyStr8", tinystr8_fn.clone()),
+            Fun::new("String", te!(String)),
+            Fun::new("TinyStr8", te!(TinyStr8)),
         ],
         STRINGS_8.to_vec(),
     );
