@@ -27,9 +27,11 @@
 mod helpers;
 mod tinystr4;
 mod tinystr8;
+mod tinystr16;
 
 pub use tinystr4::TinyStr4;
 pub use tinystr8::TinyStr8;
+pub use tinystr16::TinyStr16;
 
 #[derive(PartialEq, Eq, Debug)]
 pub enum Error {
