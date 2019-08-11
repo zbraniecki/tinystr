@@ -45,9 +45,23 @@ impl TinyStr16 {
 
     pub fn is_ascii_alphanumeric(self) -> bool {
         let word = self.0.get();
-        let mask = (word + 0x7f7f7f7f_7f7f7f7f_7f7f7f7f_7f7f7f7f) & 0x80808080_80808080_80808080_80808080;
+        let mask =
+            (word + 0x7f7f7f7f_7f7f7f7f_7f7f7f7f_7f7f7f7f) & 0x80808080_80808080_80808080_80808080;
         let lower = word | 0x20202020_20202020_20202020_20202020;
-        ((!(lower + 0x1f1f1f1f_1f1f1f1f_1f1f1f1f_1f1f1f1f) | (lower + 0x05050505_05050505_05050505_05050505)) & mask) == 0
+        ((!(lower + 0x1f1f1f1f_1f1f1f1f_1f1f1f1f_1f1f1f1f)
+            | (lower + 0x05050505_05050505_05050505_05050505))
+            & mask)
+            == 0
+    }
+
+    pub fn to_ascii_titlecase(self) -> Self {
+        let word = self.0.get().to_le();
+        let mask = ((word + 0x3f3f3f3f_3f3f3f3f_3f3f3f3f_3f3f3f1f)
+            & !(word + 0x25252525_25252525_25252525_25252505)
+            & 0x80808080_80808080_80808080_80808080)
+            >> 2;
+        let result = (word | mask) & !(0x20 & mask);
+        unsafe { Self(NonZeroU128::new_unchecked(u128::from_le(result))) }
     }
 }
 

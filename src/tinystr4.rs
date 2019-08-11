@@ -44,11 +44,11 @@ impl TinyStr4 {
 
     /// Makes the string all lowercase except for the first character,
     /// which is made uppercase.
-    pub fn to_ascii_titlecase(self) -> TinyStr4 {
+    pub fn to_ascii_titlecase(self) -> Self {
         let word = self.0.get().to_le();
         let mask = ((word + 0x3f3f_3f1f) & !(word + 0x2525_2505) & 0x8080_8080) >> 2;
         let result = (word | mask) & !(0x20 & mask);
-        unsafe { TinyStr4(NonZeroU32::new_unchecked(u32::from_le(result))) }
+        unsafe { Self(NonZeroU32::new_unchecked(u32::from_le(result))) }
     }
 }
 

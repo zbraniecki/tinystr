@@ -1,6 +1,6 @@
 use std::fmt::Write;
 use std::ops::Deref;
-use tinystr::{Error, TinyStr4, TinyStr8, TinyStr16};
+use tinystr::{Error, TinyStr16, TinyStr4, TinyStr8};
 
 #[test]
 fn tiny4_basic() {
@@ -179,6 +179,50 @@ fn tiny8_alpha() {
 }
 
 #[test]
+fn tiny8_titlecase() {
+    assert_eq!(
+        "abcdabcd"
+            .parse::<TinyStr8>()
+            .unwrap()
+            .to_ascii_titlecase()
+            .as_str(),
+        "Abcdabcd"
+    );
+    assert_eq!(
+        "ABCDABCD"
+            .parse::<TinyStr8>()
+            .unwrap()
+            .to_ascii_titlecase()
+            .as_str(),
+        "Abcdabcd"
+    );
+    assert_eq!(
+        "aBCDaBCD"
+            .parse::<TinyStr8>()
+            .unwrap()
+            .to_ascii_titlecase()
+            .as_str(),
+        "Abcdabcd"
+    );
+    assert_eq!(
+        "A123a123"
+            .parse::<TinyStr8>()
+            .unwrap()
+            .to_ascii_titlecase()
+            .as_str(),
+        "A123a123"
+    );
+    assert_eq!(
+        "123a123A"
+            .parse::<TinyStr8>()
+            .unwrap()
+            .to_ascii_titlecase()
+            .as_str(),
+        "123a123a"
+    );
+}
+
+#[test]
 fn tiny8_ord() {
     let mut v: Vec<TinyStr8> = vec!["nedis".parse().unwrap(), "macos".parse().unwrap()];
     v.sort();
@@ -231,7 +275,10 @@ fn tiny16_size() {
     assert!("12345678123456".parse::<TinyStr16>().is_ok());
     assert!("123456781234567".parse::<TinyStr16>().is_ok());
     assert!("1234567812345678".parse::<TinyStr16>().is_ok());
-    assert_eq!("12345678123456789".parse::<TinyStr16>(), Err(Error::InvalidSize));
+    assert_eq!(
+        "12345678123456789".parse::<TinyStr16>(),
+        Err(Error::InvalidSize)
+    );
 }
 
 #[test]
@@ -264,6 +311,50 @@ fn tiny16_alpha() {
         .parse::<TinyStr16>()
         .unwrap()
         .is_ascii_alphanumeric());
+}
+
+#[test]
+fn tiny16_titlecase() {
+    assert_eq!(
+        "abcdabcdabcdabcd"
+            .parse::<TinyStr16>()
+            .unwrap()
+            .to_ascii_titlecase()
+            .as_str(),
+        "Abcdabcdabcdabcd"
+    );
+    assert_eq!(
+        "ABCDABCDABCDABCD"
+            .parse::<TinyStr16>()
+            .unwrap()
+            .to_ascii_titlecase()
+            .as_str(),
+        "Abcdabcdabcdabcd"
+    );
+    assert_eq!(
+        "aBCDaBCDaBCDaBCD"
+            .parse::<TinyStr16>()
+            .unwrap()
+            .to_ascii_titlecase()
+            .as_str(),
+        "Abcdabcdabcdabcd"
+    );
+    assert_eq!(
+        "A123a123A123a123"
+            .parse::<TinyStr16>()
+            .unwrap()
+            .to_ascii_titlecase()
+            .as_str(),
+        "A123a123a123a123"
+    );
+    assert_eq!(
+        "123a123A123a123A"
+            .parse::<TinyStr16>()
+            .unwrap()
+            .to_ascii_titlecase()
+            .as_str(),
+        "123a123a123a123a"
+    );
 }
 
 #[test]
