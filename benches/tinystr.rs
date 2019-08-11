@@ -5,15 +5,27 @@ use criterion::Bencher;
 use criterion::Criterion;
 use criterion::Fun;
 
-use tinystr::{TinyStr4, TinyStr8};
+use tinystr::{TinyStr4, TinyStr8, TinyStr16};
 
 static STRINGS_4: &[&str] = &[
-    "US", "GB", "AR", "Hans", "CN", "AT", "PL", "FR", "AT", "Cyrl", "SR", "NO", "FR", "MK", "UK",
+    "US", "GB", "AR", "Hans",
+    "CN", "AT", "PL", "FR",
+    "AT", "Cyrl", "SR", "NO",
+    "FR", "MK", "UK",
 ];
 
 static STRINGS_8: &[&str] = &[
-    "Latn", "windows", "AR", "Hans", "macos", "AT", "pl", "FR", "en", "Cyrl", "SR", "NO", "419",
-    "und", "UK",
+    "Latn", "windows", "AR", "Hans",
+    "macos", "AT", "pl", "FR",
+    "en", "Cyrl", "SR", "NO",
+    "419", "und", "UK",
+];
+
+static STRINGS_16: &[&str] = &[
+    "Latn", "windows", "AR", "Hans",
+    "macos", "AT", "infiniband", "FR",
+    "en", "Cyrl", "FromIntegral", "NO",
+    "419", "MacintoshOSX2019", "UK",
 ];
 
 fn construct_from_str(c: &mut Criterion) {
@@ -33,6 +45,7 @@ fn construct_from_str(c: &mut Criterion) {
         Fun::new("String", cfs!(String)),
         Fun::new("TinyStr4", cfs!(TinyStr4)),
         Fun::new("TinyStr8", cfs!(TinyStr8)),
+        Fun::new("TinyStr16", cfs!(TinyStr16)),
     ];
 
     c.bench_functions("construct_from_str/4", funcs, STRINGS_4.to_vec());
@@ -40,9 +53,17 @@ fn construct_from_str(c: &mut Criterion) {
     let funcs = vec![
         Fun::new("String", cfs!(String)),
         Fun::new("TinyStr8", cfs!(TinyStr8)),
+        Fun::new("TinyStr16", cfs!(TinyStr16)),
     ];
 
     c.bench_functions("construct_from_str/8", funcs, STRINGS_8.to_vec());
+
+    let funcs = vec![
+        Fun::new("String", cfs!(String)),
+        Fun::new("TinyStr16", cfs!(TinyStr16)),
+    ];
+
+    c.bench_functions("construct_from_str/16", funcs, STRINGS_16.to_vec());
 }
 
 fn construct_unchecked(c: &mut Criterion) {
@@ -73,6 +94,12 @@ fn construct_unchecked(c: &mut Criterion) {
     ];
 
     c.bench_functions("construct_unchecked/8", funcs, STRINGS_8.to_vec());
+
+    let funcs = vec![
+        Fun::new("TinyStr16", cu!(TinyStr16, u128)),
+    ];
+
+    c.bench_functions("construct_unchecked/16", funcs, STRINGS_16.to_vec());
 }
 
 macro_rules! convert_to_ascii {
@@ -101,7 +128,8 @@ fn convert_to_ascii_lowercase(c: &mut Criterion) {
         vec![
             Fun::new("String", ctal!(String)),
             Fun::new("TinyStr4", ctal!(TinyStr4)),
-            Fun::new("TinyStr8", ctal!(TinyStr8))
+            Fun::new("TinyStr8", ctal!(TinyStr8)),
+            Fun::new("TinyStr16", ctal!(TinyStr16)),
         ],
         STRINGS_4.to_vec(),
     );
@@ -110,8 +138,17 @@ fn convert_to_ascii_lowercase(c: &mut Criterion) {
         vec![
             Fun::new("String", ctal!(String)),
             Fun::new("TinyStr8", ctal!(TinyStr8)),
+            Fun::new("TinyStr16", ctal!(TinyStr16)),
         ],
         STRINGS_8.to_vec(),
+    );
+    c.bench_functions(
+        "convert_to_ascii_lowercase/16",
+        vec![
+            Fun::new("String", ctal!(String)),
+            Fun::new("TinyStr16", ctal!(TinyStr16)),
+        ],
+        STRINGS_16.to_vec(),
     );
 }
 
@@ -125,7 +162,8 @@ fn convert_to_ascii_uppercase(c: &mut Criterion) {
         vec![
             Fun::new("String", ctau!(String)),
             Fun::new("TinyStr4", ctau!(TinyStr4)),
-            Fun::new("TinyStr8", ctau!(TinyStr8))
+            Fun::new("TinyStr8", ctau!(TinyStr8)),
+            Fun::new("TinyStr16", ctau!(TinyStr16)),
         ],
         STRINGS_4.to_vec(),
     );
@@ -133,9 +171,18 @@ fn convert_to_ascii_uppercase(c: &mut Criterion) {
         "convert_to_ascii_uppercase/8",
         vec![
             Fun::new("String", ctau!(String)),
-            Fun::new("TinyStr8", ctau!(TinyStr8))
+            Fun::new("TinyStr8", ctau!(TinyStr8)),
+            Fun::new("TinyStr16", ctau!(TinyStr16)),
         ],
         STRINGS_8.to_vec(),
+    );
+    c.bench_functions(
+        "convert_to_ascii_uppercase/16",
+        vec![
+            Fun::new("String", ctau!(String)),
+            Fun::new("TinyStr16", ctau!(TinyStr16)),
+        ],
+        STRINGS_16.to_vec(),
     );
 }
 
@@ -162,7 +209,8 @@ fn convert_to_ascii_titlecase(c: &mut Criterion) {
         vec![
             Fun::new("String", ctat!(String)),
             Fun::new("TinyStr4", ctat!(TinyStr4)),
-            Fun::new("TinyStr8", ctat!(TinyStr8))
+            Fun::new("TinyStr8", ctat!(TinyStr8)),
+            Fun::new("TinyStr16", ctat!(TinyStr16)),
         ],
         STRINGS_4.to_vec(),
     );
@@ -170,9 +218,18 @@ fn convert_to_ascii_titlecase(c: &mut Criterion) {
         "convert_to_ascii_titlecase/8",
         vec![
             Fun::new("String", ctat!(String)),
-            Fun::new("TinyStr8", ctat!(TinyStr8))
+            Fun::new("TinyStr8", ctat!(TinyStr8)),
+            Fun::new("TinyStr16", ctat!(TinyStr16)),
         ],
         STRINGS_8.to_vec(),
+    );
+    c.bench_functions(
+        "convert_to_ascii_titlecase/16",
+        vec![
+            Fun::new("String", ctat!(String)),
+            Fun::new("TinyStr16", ctat!(TinyStr16)),
+        ],
+        STRINGS_16.to_vec(),
     );
 }
 
@@ -199,6 +256,7 @@ fn test_is_ascii_alphanumeric(c: &mut Criterion) {
             Fun::new("String", tiaa!(String)),
             Fun::new("TinyStr4", tiaa!(TinyStr4)),
             Fun::new("TinyStr8", tiaa!(TinyStr8)),
+            Fun::new("TinyStr16", tiaa!(TinyStr16)),
         ],
         STRINGS_4.to_vec(),
     );
@@ -207,8 +265,17 @@ fn test_is_ascii_alphanumeric(c: &mut Criterion) {
         vec![
             Fun::new("String", tiaa!(String)),
             Fun::new("TinyStr8", tiaa!(TinyStr8)),
+            Fun::new("TinyStr16", tiaa!(TinyStr16)),
         ],
         STRINGS_8.to_vec(),
+    );
+    c.bench_functions(
+        "test_is_ascii_alphanumeric/16",
+        vec![
+            Fun::new("String", tiaa!(String)),
+            Fun::new("TinyStr16", tiaa!(TinyStr16)),
+        ],
+        STRINGS_16.to_vec(),
     );
 }
 
@@ -237,6 +304,7 @@ fn test_eq(c: &mut Criterion) {
             Fun::new("String", te!(String)),
             Fun::new("TinyStr4", te!(TinyStr4)),
             Fun::new("TinyStr8", te!(TinyStr8)),
+            Fun::new("TinyStr16", te!(TinyStr16)),
         ],
         STRINGS_4.to_vec(),
     );
@@ -245,8 +313,17 @@ fn test_eq(c: &mut Criterion) {
         vec![
             Fun::new("String", te!(String)),
             Fun::new("TinyStr8", te!(TinyStr8)),
+            Fun::new("TinyStr16", te!(TinyStr16)),
         ],
         STRINGS_8.to_vec(),
+    );
+    c.bench_functions(
+        "test_eq/16",
+        vec![
+            Fun::new("String", te!(String)),
+            Fun::new("TinyStr16", te!(TinyStr16)),
+        ],
+        STRINGS_16.to_vec(),
     );
 }
 
