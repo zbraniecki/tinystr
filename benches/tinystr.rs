@@ -279,6 +279,66 @@ fn test_is_ascii_alphanumeric(c: &mut Criterion) {
     );
 }
 
+fn test_eq(c: &mut Criterion) {
+    let string_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
+        let raw: Vec<String> = inputs
+            .iter()
+            .map(|s| s.parse::<String>().unwrap())
+            .collect();
+        b.iter(move || {
+            for s in &raw {
+                for l in &raw {
+                    let _ = black_box(s == l);
+                }
+            }
+        })
+    };
+    let tinystr4_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
+        let raw: Vec<TinyStr4> = inputs
+            .iter()
+            .map(|s| s.parse::<TinyStr4>().unwrap())
+            .collect();
+        b.iter(move || {
+            for s in &raw {
+                for l in &raw {
+                    let _ = black_box(s == l);
+                }
+            }
+        })
+    };
+    let tinystr8_fn = |b: &mut Bencher, inputs: &Vec<&str>| {
+        let raw: Vec<TinyStr8> = inputs
+            .iter()
+            .map(|s| s.parse::<TinyStr8>().unwrap())
+            .collect();
+        b.iter(move || {
+            for s in &raw {
+                for l in &raw {
+                    let _ = black_box(s == l);
+                }
+            }
+        })
+    };
+
+    c.bench_functions(
+        "test_eq/4",
+        vec![
+            Fun::new("String", string_fn.clone()),
+            Fun::new("TinyStr4", tinystr4_fn.clone()),
+            Fun::new("TinyStr8", tinystr8_fn.clone()),
+        ],
+        STRINGS_4.to_vec(),
+    );
+    c.bench_functions(
+        "test_eq/8",
+        vec![
+            Fun::new("String", string_fn.clone()),
+            Fun::new("TinyStr8", tinystr8_fn.clone()),
+        ],
+        STRINGS_8.to_vec(),
+    );
+}
+
 criterion_group!(
     benches,
     construct_from_str,
@@ -287,5 +347,6 @@ criterion_group!(
     convert_to_ascii_uppercase,
     convert_to_ascii_titlecase,
     test_is_ascii_alphanumeric,
+    test_eq,
 );
 criterion_main!(benches);
