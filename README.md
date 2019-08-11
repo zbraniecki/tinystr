@@ -6,7 +6,7 @@ Usage
 -----
 
 ```rust
-use tinystr::{TinyStr4, TinyStr8};
+use tinystr::{TinyStr4, TinyStr8, TinyStr16};
 
 fn main() {
     let s1: TinyStr4 = "tEsT".parse()
@@ -24,7 +24,17 @@ fn main() {
     assert_eq!(s2, "New York");
     assert_eq!(s2.to_ascii_uppercase(), "NEW YORK");
     assert_eq!(s2.to_ascii_lowercase(), "new york");
+    assert_eq!(s2.to_ascii_titlecase(), "New york");
     assert_eq!(s2.is_ascii_alphanumeric(), false);
+
+    let s3: TinyStr16 = "metaMoRphosis123".parse()
+        .expect("Failed to parse.");
+
+    assert_eq!(s3, "metaMoRphosis123");
+    assert_eq!(s3.to_ascii_uppercase(), "METAMORPHOSIS123");
+    assert_eq!(s3.to_ascii_lowercase(), "metamorphosis123");
+    assert_eq!(s3.to_ascii_titlecase(), "Metamorphosis123");
+    assert_eq!(s3.is_ascii_alphanumeric(), true);
 }
 ```
 
@@ -34,11 +44,12 @@ Details
 It provides two structs:
  * `TinyStr4` an ASCII-only string limited to 4 characters.
  * `TinyStr8` an ASCII-only string limited to 8 characters.
+ * `TinyStr16` an ASCII-only string limited to 16 characters.
 
-The crate stores them as `u32`/`u64` and uses bitmasking to provide basic string manipulation operations:
+The crate stores them as `u32`/`u64`/`u128` and uses bitmasking to provide basic string manipulation operations:
  * to_ascii_lowercase
  * to_ascii_uppercase
- * to_ascii_titlecase (TinyStr4 only)
+ * to_ascii_titlecase
  * is_ascii_alphanumeric
  * PartialEq
 
