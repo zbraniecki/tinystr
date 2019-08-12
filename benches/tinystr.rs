@@ -164,6 +164,17 @@ fn convert_to_ascii_titlecase(c: &mut Criterion) {
     bench_block!(c, "convert_to_ascii_titlecase", ctat);
 }
 
+trait ExtIsAsciiAlphanumeric {
+    #[inline(always)]
+    fn is_ascii_alphanumeric(&self) -> bool;
+}
+
+impl ExtIsAsciiAlphanumeric for str {
+    fn is_ascii_alphanumeric(&self) -> bool {
+        self.chars().all(|c| c.is_ascii_alphanumeric())
+    }
+}
+
 fn test_is_ascii_alphanumeric(c: &mut Criterion) {
     macro_rules! tiaa {
         ($ty:ty) => {
@@ -171,7 +182,7 @@ fn test_is_ascii_alphanumeric(c: &mut Criterion) {
                 let raw: Vec<$ty> = inputs.iter().map(|s| s.parse::<$ty>().unwrap()).collect();
                 b.iter(move || {
                     for s in &raw {
-                        let _ = black_box(s.chars().all(|c| c.is_ascii_alphanumeric()));
+                        let _ = black_box(s.is_ascii_alphanumeric());
                     }
                 })
             }
