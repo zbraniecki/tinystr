@@ -41,7 +41,7 @@ fn main() {
 Details
 -------
 
-It provides two structs:
+It provides three structs:
  * `TinyStr4` an ASCII-only string limited to 4 characters.
  * `TinyStr8` an ASCII-only string limited to 8 characters.
  * `TinyStr16` an ASCII-only string limited to 16 characters.
