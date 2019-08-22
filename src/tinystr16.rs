@@ -43,15 +43,26 @@ impl TinyStr16 {
         unsafe { Self(NonZeroU128::new_unchecked(result)) }
     }
 
-    pub fn is_ascii_alphanumeric(self) -> bool {
+    pub fn is_ascii_alpha(self) -> bool {
         let word = self.0.get();
         let mask =
             (word + 0x7f7f7f7f_7f7f7f7f_7f7f7f7f_7f7f7f7f) & 0x80808080_80808080_80808080_80808080;
         let lower = word | 0x20202020_20202020_20202020_20202020;
-        ((!(lower + 0x1f1f1f1f_1f1f1f1f_1f1f1f1f_1f1f1f1f)
-            | (lower + 0x05050505_05050505_05050505_05050505))
-            & mask)
-            == 0
+        let alpha = !(lower + 0x1f1f1f1f_1f1f1f1f_1f1f1f1f_1f1f1f1f)
+            | (lower + 0x05050505_05050505_05050505_05050505);
+        (alpha & mask) == 0
+    }
+
+    pub fn is_ascii_alphanumeric(self) -> bool {
+        let word = self.0.get();
+        let mask =
+            (word + 0x7f7f7f7f_7f7f7f7f_7f7f7f7f_7f7f7f7f) & 0x80808080_80808080_80808080_80808080;
+        let numeric = !(word + 0x50505050_50505050_50505050_50505050)
+            | (word + 0x46464646_46464646_46464646_46464646);
+        let lower = word | 0x20202020_20202020_20202020_20202020;
+        let alpha = !(lower + 0x1f1f1f1f_1f1f1f1f_1f1f1f1f_1f1f1f1f)
+            | (lower + 0x05050505_05050505_05050505_05050505);
+        (alpha & numeric & mask) == 0
     }
 
     pub fn to_ascii_titlecase(self) -> Self {
