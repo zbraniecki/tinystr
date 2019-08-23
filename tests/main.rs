@@ -41,11 +41,23 @@ fn tiny4_nonascii() {
 #[test]
 fn tiny4_alpha() {
     let s: TinyStr4 = "@aZ[".parse().unwrap();
+    assert!(!s.is_ascii_alphabetic());
     assert!(!s.is_ascii_alphanumeric());
     assert_eq!(s.to_ascii_uppercase().as_str(), "@AZ[");
     assert_eq!(s.to_ascii_lowercase().as_str(), "@az[");
 
+    assert!("abYZ".parse::<TinyStr4>().unwrap().is_ascii_alphabetic());
     assert!("abYZ".parse::<TinyStr4>().unwrap().is_ascii_alphanumeric());
+    assert!("a123".parse::<TinyStr4>().unwrap().is_ascii_alphanumeric());
+    assert!(!"a123".parse::<TinyStr4>().unwrap().is_ascii_alphabetic());
+}
+
+#[test]
+fn tiny4_numeric() {
+    let s: TinyStr4 = "@aZ[".parse().unwrap();
+    assert!(!s.is_ascii_numeric());
+
+    assert!("0123".parse::<TinyStr4>().unwrap().is_ascii_numeric());
 }
 
 #[test]
@@ -168,14 +180,29 @@ fn tiny8_nonascii() {
 #[test]
 fn tiny8_alpha() {
     let s: TinyStr8 = "@abcXYZ[".parse().unwrap();
+    assert!(!s.is_ascii_alphabetic());
     assert!(!s.is_ascii_alphanumeric());
     assert_eq!(s.to_ascii_uppercase().as_str(), "@ABCXYZ[");
     assert_eq!(s.to_ascii_lowercase().as_str(), "@abcxyz[");
 
+    assert!("abcXYZ".parse::<TinyStr8>().unwrap().is_ascii_alphabetic());
     assert!("abcXYZ"
         .parse::<TinyStr8>()
         .unwrap()
         .is_ascii_alphanumeric());
+    assert!(!"abc123".parse::<TinyStr8>().unwrap().is_ascii_alphabetic());
+    assert!("abc123"
+        .parse::<TinyStr8>()
+        .unwrap()
+        .is_ascii_alphanumeric());
+}
+
+#[test]
+fn tiny8_numeric() {
+    let s: TinyStr8 = "@abcXYZ[".parse().unwrap();
+    assert!(!s.is_ascii_numeric());
+
+    assert!("01234567".parse::<TinyStr8>().unwrap().is_ascii_numeric());
 }
 
 #[test]
@@ -303,6 +330,7 @@ fn tiny16_nonascii() {
 #[test]
 fn tiny16_alpha() {
     let s: TinyStr16 = "@abcdefgTUVWXYZ[".parse().unwrap();
+    assert!(!s.is_ascii_alphabetic());
     assert!(!s.is_ascii_alphanumeric());
     assert_eq!(s.to_ascii_uppercase().as_str(), "@ABCDEFGTUVWXYZ[");
     assert_eq!(s.to_ascii_lowercase().as_str(), "@abcdefgtuvwxyz[");
@@ -310,7 +338,30 @@ fn tiny16_alpha() {
     assert!("abcdefgTUVWXYZ"
         .parse::<TinyStr16>()
         .unwrap()
+        .is_ascii_alphabetic());
+    assert!("abcdefgTUVWXYZ"
+        .parse::<TinyStr16>()
+        .unwrap()
         .is_ascii_alphanumeric());
+    assert!(!"abcdefg0123456"
+        .parse::<TinyStr16>()
+        .unwrap()
+        .is_ascii_alphabetic());
+    assert!("abcdefgTUVWXYZ"
+        .parse::<TinyStr16>()
+        .unwrap()
+        .is_ascii_alphanumeric());
+}
+
+#[test]
+fn tiny16_numeric() {
+    let s: TinyStr16 = "@abcdefgTUVWXYZ[".parse().unwrap();
+    assert!(!s.is_ascii_numeric());
+
+    assert!("0123456789"
+        .parse::<TinyStr16>()
+        .unwrap()
+        .is_ascii_numeric());
 }
 
 #[test]
