@@ -35,7 +35,7 @@ impl TinyStr4 {
         unsafe { Self(NonZeroU32::new_unchecked(result)) }
     }
 
-    pub fn is_ascii_alpha(self) -> bool {
+    pub fn is_ascii_alphabetic(self) -> bool {
         let word = self.0.get();
         let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
         let lower = word | 0x2020_2020;
@@ -50,6 +50,13 @@ impl TinyStr4 {
         let lower = word | 0x2020_2020;
         let alpha = !(lower + 0x1f1f_1f1f) | (lower + 0x0505_0505);
         (alpha & numeric & mask) == 0
+    }
+
+    pub fn is_ascii_numeric(self) -> bool {
+        let word = self.0.get();
+        let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
+        let numeric = !(word + 0x5050_5050) | (word + 0x4646_4646);
+        (numeric & mask) == 0
     }
 
     /// Makes the string all lowercase except for the first character,
