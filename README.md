@@ -41,16 +41,18 @@ fn main() {
 Details
 -------
 
-It provides three structs:
+The crateh provides three structs:
  * `TinyStr4` an ASCII-only string limited to 4 characters.
  * `TinyStr8` an ASCII-only string limited to 8 characters.
  * `TinyStr16` an ASCII-only string limited to 16 characters.
 
-The crate stores them as `u32`/`u64`/`u128` and uses bitmasking to provide basic string manipulation operations:
+It stores them as `u32`/`u64`/`u128` and uses bitmasking to provide basic string manipulation operations:
+ * is_ascii_numeric
+ * is_ascii_alphabetic
+ * is_ascii_alphanumeric
  * to_ascii_lowercase
  * to_ascii_uppercase
  * to_ascii_titlecase
- * is_ascii_alphanumeric
  * PartialEq
 
 This set is sufficient for certain classes of uses such as `unic-langid` libraries.
