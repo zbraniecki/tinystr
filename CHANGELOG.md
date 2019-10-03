@@ -4,6 +4,10 @@
 
   - …
 
+## tinystr 0.3.1 (October 1, 2019)
+
+  - Documentation.
+
 ## tinystr 0.3.0 (August 23, 2019)
 
   - Separate out `is_ascii_numeric`, `is_ascii_alphanumeric` and `is_ascii_alphabetic`.
