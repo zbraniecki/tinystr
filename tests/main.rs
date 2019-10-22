@@ -9,6 +9,19 @@ fn tiny4_basic() {
 }
 
 #[test]
+fn tiny4_from_bytes() {
+    let s = TinyStr4::from_bytes("abc".as_bytes()).unwrap();
+    assert_eq!(s.deref(), "abc");
+
+    assert_eq!(
+        TinyStr4::from_bytes(&[0, 159, 146, 150]),
+        Err(Error::NonAscii)
+    );
+    assert_eq!(TinyStr4::from_bytes(&[]), Err(Error::InvalidSize));
+    assert_eq!(TinyStr4::from_bytes(&[0]), Err(Error::InvalidNull));
+}
+
+#[test]
 fn tiny4_size() {
     assert_eq!("".parse::<TinyStr4>(), Err(Error::InvalidSize));
     assert!("1".parse::<TinyStr4>().is_ok());
@@ -142,6 +155,19 @@ fn tiny4_debug() {
 fn tiny8_basic() {
     let s: TinyStr8 = "abcde".parse().unwrap();
     assert_eq!(s.deref(), "abcde");
+}
+
+#[test]
+fn tiny8_from_bytes() {
+    let s = TinyStr8::from_bytes("abcde".as_bytes()).unwrap();
+    assert_eq!(s.deref(), "abcde");
+
+    assert_eq!(
+        TinyStr8::from_bytes(&[0, 159, 146, 150]),
+        Err(Error::NonAscii)
+    );
+    assert_eq!(TinyStr8::from_bytes(&[]), Err(Error::InvalidSize));
+    assert_eq!(TinyStr8::from_bytes(&[0]), Err(Error::InvalidNull));
 }
 
 #[test]
@@ -281,6 +307,19 @@ fn tiny8_display() {
 fn tiny8_debug() {
     let s: TinyStr8 = "abcdef".parse().unwrap();
     assert_eq!(format!("{:#?}", s), "\"abcdef\"");
+}
+
+#[test]
+fn tiny16_from_bytes() {
+    let s = TinyStr16::from_bytes("abcdefghijk".as_bytes()).unwrap();
+    assert_eq!(s.deref(), "abcdefghijk");
+
+    assert_eq!(
+        TinyStr16::from_bytes(&[0, 159, 146, 150]),
+        Err(Error::NonAscii)
+    );
+    assert_eq!(TinyStr16::from_bytes(&[]), Err(Error::InvalidSize));
+    assert_eq!(TinyStr16::from_bytes(&[0]), Err(Error::InvalidNull));
 }
 
 #[test]

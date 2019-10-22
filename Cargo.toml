@@ -16,5 +16,9 @@ categories = ["data-structures"]
 criterion = "0.3"
 
 [[bench]]
+name = "construct"
+harness = false
+
+[[bench]]
 name = "tinystr"
 harness = false

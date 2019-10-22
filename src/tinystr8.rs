@@ -25,6 +25,41 @@ use crate::Error;
 pub struct TinyStr8(NonZeroU64);
 
 impl TinyStr8 {
+    /// Creates a TinyStr8 from a byte slice.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyStr8;
+    ///
+    /// let s1 = TinyStr8::from_bytes("Testing".as_bytes())
+    ///     .expect("Failed to parse.");
+    ///
+    /// assert_eq!(s1, "Testing");
+    /// ```
+    #[inline(always)]
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, Error> {
+        let len = bytes.len();
+        if len < 1 || len > 8 {
+            return Err(Error::InvalidSize);
+        }
+        unsafe {
+            let mut word: u64 = 0;
+            copy_nonoverlapping(bytes.as_ptr(), &mut word as *mut u64 as *mut u8, len);
+            let mask = 0x80808080_80808080u64 >> (8 * (8 - len));
+            // TODO: could do this with #cfg(target_endian), but this is clearer and
+            // more confidence-inspiring.
+            let mask = u64::from_le(mask);
+            if (word & mask) != 0 {
+                return Err(Error::NonAscii);
+            }
+            if ((mask - word) & mask) != 0 {
+                return Err(Error::InvalidNull);
+            }
+            Ok(Self(NonZeroU64::new_unchecked(word)))
+        }
+    }
+
     /// An unsafe constructor intended for cases where the consumer
     /// guarantees that the input is a little endian integer which
     /// is a correct representation of a `TinyStr8` string.
@@ -267,25 +302,7 @@ impl FromStr for TinyStr8 {
 
     #[inline(always)]
     fn from_str(text: &str) -> Result<Self, Self::Err> {
-        let len = text.len();
-        if len < 1 || len > 8 {
-            return Err(Error::InvalidSize);
-        }
-        unsafe {
-            let mut word: u64 = 0;
-            copy_nonoverlapping(text.as_ptr(), &mut word as *mut u64 as *mut u8, len);
-            let mask = 0x80808080_80808080u64 >> (8 * (8 - len));
-            // TODO: could do this with #cfg(target_endian), but this is clearer and
-            // more confidence-inspiring.
-            let mask = u64::from_le(mask);
-            if (word & mask) != 0 {
-                return Err(Error::NonAscii);
-            }
-            if ((mask - word) & mask) != 0 {
-                return Err(Error::InvalidNull);
-            }
-            Ok(Self(NonZeroU64::new_unchecked(word)))
-        }
+        TinyStr8::from_bytes(text.as_bytes())
     }
 }
 

@@ -5,7 +5,7 @@ use std::num::NonZeroU32;
 use std::ops::Deref;
 use std::str::FromStr;
 
-use crate::helpers::make_4byte_str;
+use crate::helpers::make_4byte_bytes;
 use crate::Error;
 
 /// A tiny string that is from 1 to 4 non-NUL ASCII characters.
@@ -25,6 +25,31 @@ use crate::Error;
 pub struct TinyStr4(NonZeroU32);
 
 impl TinyStr4 {
+    /// Creates a TinyStr4 from a byte slice.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyStr4;
+    ///
+    /// let s1 = TinyStr4::from_bytes("Test".as_bytes())
+    ///     .expect("Failed to parse.");
+    ///
+    /// assert_eq!(s1, "Test");
+    /// ```
+    #[inline(always)]
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, Error> {
+        unsafe {
+            match bytes.len() {
+                1 => make_4byte_bytes(bytes, 1, 0x80).map(Self),
+                2 => make_4byte_bytes(bytes, 2, 0x8080).map(Self),
+                3 => make_4byte_bytes(bytes, 3, 0x0080_8080).map(Self),
+                4 => make_4byte_bytes(bytes, 4, 0x8080_8080).map(Self),
+                _ => Err(Error::InvalidSize),
+            }
+        }
+    }
+
     /// An unsafe constructor intended for cases where the consumer
     /// guarantees that the input is a little endian integer which
     /// is a correct representation of a `TinyStr4` string.
@@ -257,15 +282,7 @@ impl FromStr for TinyStr4 {
 
     #[inline(always)]
     fn from_str(text: &str) -> Result<Self, Self::Err> {
-        unsafe {
-            match text.len() {
-                1 => make_4byte_str(text, 1, 0x80).map(Self),
-                2 => make_4byte_str(text, 2, 0x8080).map(Self),
-                3 => make_4byte_str(text, 3, 0x0080_8080).map(Self),
-                4 => make_4byte_str(text, 4, 0x8080_8080).map(Self),
-                _ => Err(Error::InvalidSize),
-            }
-        }
+        Self::from_bytes(text.as_bytes())
     }
 }
 
