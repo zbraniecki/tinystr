@@ -43,7 +43,7 @@ macro_rules! bench_block {
             Fun::new("TinyStr16", $action!(TinyStr16)),
         ];
 
-        $c.bench_functions(&format!("{}/4", $name), funcs, STRINGS_4.to_vec());
+        $c.bench_functions(&format!("{}/4", $name), funcs, STRINGS_4);
 
         let funcs = vec![
             Fun::new("String", $action!(String)),
@@ -51,23 +51,23 @@ macro_rules! bench_block {
             Fun::new("TinyStr16", $action!(TinyStr16)),
         ];
 
-        $c.bench_functions(&format!("{}/8", $name), funcs, STRINGS_8.to_vec());
+        $c.bench_functions(&format!("{}/8", $name), funcs, STRINGS_8);
 
         let funcs = vec![
             Fun::new("String", $action!(String)),
             Fun::new("TinyStr16", $action!(TinyStr16)),
         ];
 
-        $c.bench_functions(&format!("{}/16", $name), funcs, STRINGS_16.to_vec());
+        $c.bench_functions(&format!("{}/16", $name), funcs, STRINGS_16);
     };
 }
 
 fn construct_from_str(c: &mut Criterion) {
     macro_rules! cfs {
         ($r:ty) => {
-            |b: &mut Bencher, strings: &Vec<&str>| {
+            |b: &mut Bencher, strings: &&[&str]| {
                 b.iter(|| {
-                    for s in strings {
+                    for s in *strings {
                         let _: $r = black_box(s.parse().unwrap());
                     }
                 })
@@ -81,7 +81,7 @@ fn construct_from_str(c: &mut Criterion) {
 fn construct_unchecked(c: &mut Criterion) {
     macro_rules! cu {
         ($tty:ty, $rty:ty) => {
-            |b, inputs: &Vec<&str>| {
+            |b, inputs: &&[&str]| {
                 let raw: Vec<$rty> = inputs
                     .iter()
                     .map(|s| s.parse::<$tty>().unwrap().into())
@@ -97,20 +97,20 @@ fn construct_unchecked(c: &mut Criterion) {
 
     let funcs = vec![Fun::new("TinyStr4", cu!(TinyStr4, u32))];
 
-    c.bench_functions("construct_unchecked/4", funcs, STRINGS_4.to_vec());
+    c.bench_functions("construct_unchecked/4", funcs, STRINGS_4);
 
     let funcs = vec![Fun::new("TinyStr8", cu!(TinyStr8, u64))];
 
-    c.bench_functions("construct_unchecked/8", funcs, STRINGS_8.to_vec());
+    c.bench_functions("construct_unchecked/8", funcs, STRINGS_8);
 
     let funcs = vec![Fun::new("TinyStr16", cu!(TinyStr16, u128))];
 
-    c.bench_functions("construct_unchecked/16", funcs, STRINGS_16.to_vec());
+    c.bench_functions("construct_unchecked/16", funcs, STRINGS_16);
 }
 
 macro_rules! convert_to_ascii {
     ($ty:ty, $action:ident) => {
-        |b: &mut Bencher, inputs: &Vec<&str>| {
+        |b: &mut Bencher, inputs: &&[&str]| {
             let raw: Vec<$ty> = inputs.iter().map(|s| s.parse::<$ty>().unwrap()).collect();
             b.iter(move || {
                 for s in &raw {
@@ -178,7 +178,7 @@ impl ExtIsAsciiAlphanumeric for str {
 fn test_is_ascii_alphanumeric(c: &mut Criterion) {
     macro_rules! tiaa {
         ($ty:ty) => {
-            |b: &mut Bencher, inputs: &Vec<&str>| {
+            |b: &mut Bencher, inputs: &&[&str]| {
                 let raw: Vec<$ty> = inputs.iter().map(|s| s.parse::<$ty>().unwrap()).collect();
                 b.iter(move || {
                     for s in &raw {
@@ -195,7 +195,7 @@ fn test_is_ascii_alphanumeric(c: &mut Criterion) {
 fn test_eq(c: &mut Criterion) {
     macro_rules! te {
         ($ty:ty) => {
-            |b: &mut Bencher, inputs: &Vec<&str>| {
+            |b: &mut Bencher, inputs: &&[&str]| {
                 let raw: Vec<$ty> = inputs.iter().map(|s| s.parse::<$ty>().unwrap()).collect();
                 b.iter(move || {
                     for s in &raw {
