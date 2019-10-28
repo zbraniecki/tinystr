@@ -4,6 +4,14 @@
 
   - …
 
+## tinystr 0.3.2 (October 28, 2019)
+
+  - Add `from_bytes` method.
+
+## tinystr 0.3.1 (October 1, 2019)
+
+  - Documentation.
+
 ## tinystr 0.3.1 (October 1, 2019)
 
   - Documentation.
