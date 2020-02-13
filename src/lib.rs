@@ -36,17 +36,8 @@
 #[cfg(any(feature = "std", test))]
 extern crate std;
 
-#[cfg(any(feature = "std", test))]
-pub use std::string::String;
-
 #[cfg(all(not(feature = "std"), not(test)))]
 extern crate core as std;
-
-#[cfg(all(not(feature = "std"), not(test)))]
-extern crate alloc;
-
-#[cfg(all(not(feature = "std"), not(test)))]
-pub use alloc::string::String;
 
 mod helpers;
 mod tinystr16;

@@ -3,8 +3,8 @@ use std::ops::Deref;
 use std::str::FromStr;
 
 use crate::Error;
-use crate::String;
 use crate::TinyStr16;
+use crate::helpers::String;
 
 /// An ASCII string that is tiny when <= 16 chars and a String otherwise.
 ///
