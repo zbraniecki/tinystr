@@ -9,8 +9,12 @@ edition = "2018"
 license = "Apache-2.0/MIT"
 repository = "https://github.com/zbraniecki/tinystr"
 readme = "README.md"
-keywords = ["string", "str", "small", "tiny"]
+keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
+
+[features]
+default = [ "std" ] # Default to using the std
+std = []
 
 [dev-dependencies]
 criterion = "0.3"
