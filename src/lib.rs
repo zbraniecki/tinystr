@@ -59,6 +59,4 @@ pub enum Error {
     InvalidNull,
     /// String contains non-ASCII character(s).
     NonAscii,
-    /// An error that should not occur.
-    Infallible,
 }

@@ -63,8 +63,7 @@ impl FromStr for TinyStrAuto {
             }
             match String::from_str(text) {
                 Ok(result) => Ok(TinyStrAuto::Long(result)),
-                // String::from_str returns a Result<String, std::convert::Infallible>
-                Err(_) => Err(Error::Infallible),
+                Err(_) => unreachable!(),
             }
         }
     }
