@@ -30,6 +30,15 @@
 //!     assert_eq!(s2.is_ascii_alphanumeric(), false);
 //! }
 //! ```
+
+#![no_std]
+
+#[cfg(any(feature = "std", test))]
+extern crate std;
+
+#[cfg(all(not(feature = "std"), not(test)))]
+extern crate core as std;
+
 mod helpers;
 mod tinystr16;
 mod tinystr4;
