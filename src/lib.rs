@@ -43,10 +43,12 @@ mod helpers;
 mod tinystr16;
 mod tinystr4;
 mod tinystr8;
+mod tinystrauto;
 
 pub use tinystr16::TinyStr16;
 pub use tinystr4::TinyStr4;
 pub use tinystr8::TinyStr8;
+pub use tinystrauto::TinyStrAuto;
 
 /// Enum to store the various types of errors that can cause parsing a TinyStr to fail.
 #[derive(PartialEq, Eq, Debug)]

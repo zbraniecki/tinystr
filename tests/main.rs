@@ -1,6 +1,17 @@
 use std::fmt::Write;
+use std::mem::size_of;
 use std::ops::Deref;
-use tinystr::{Error, TinyStr16, TinyStr4, TinyStr8};
+use tinystr::{Error, TinyStr16, TinyStr4, TinyStr8, TinyStrAuto};
+
+#[test]
+fn tiny_sizes() {
+    assert_eq!(4, size_of::<TinyStr4>());
+    assert_eq!(8, size_of::<TinyStr8>());
+    assert_eq!(16, size_of::<TinyStr16>());
+    assert_eq!(24, size_of::<String>());
+    // Note: TinyStrAuto is size 32 even when a smaller TinyStr type is used
+    assert_eq!(32, size_of::<TinyStrAuto>());
+}
 
 #[test]
 fn tiny4_basic() {
@@ -479,4 +490,21 @@ fn tiny16_display() {
 fn tiny16_debug() {
     let s: TinyStr16 = "abcdefghijkl".parse().unwrap();
     assert_eq!(format!("{:#?}", s), "\"abcdefghijkl\"");
+}
+
+#[test]
+fn tinyauto_basic() {
+    let s1: TinyStrAuto = "abc".parse().unwrap();
+    assert_eq!(s1, "abc");
+
+    let s2: TinyStrAuto = "veryveryveryveryverylong".parse().unwrap();
+    assert_eq!(s2, "veryveryveryveryverylong");
+}
+
+#[test]
+fn tinyauto_nonascii() {
+    assert_eq!("\u{4000}".parse::<TinyStrAuto>(), Err(Error::NonAscii));
+    assert_eq!(
+        "veryveryveryveryverylong\u{4000}".parse::<TinyStrAuto>(),
+        Err(Error::NonAscii));
 }
