@@ -12,8 +12,14 @@ readme = "README.md"
 keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
 
+[dependencies]
+tinystr-macros = { path = "./macros", optional = true }
+
+[dev-dependencies]
+criterion = "0.3"
+
 [features]
-default = [ "std" ]
+default = [ "std" ] # Default to using the std
 
 # Use the standard library. Enables TinyStrAuto.
 std = []
@@ -21,8 +27,7 @@ std = []
 # Use the `alloc` crate. Enables TinyStrAuto. This feature does nothing if std is enabled.
 alloc = []
 
-[dev-dependencies]
-criterion = "0.3"
+macros = ["tinystr-macros"]
 
 [[bench]]
 name = "construct"

@@ -92,6 +92,9 @@ pub use tinystr8::TinyStr8;
 #[cfg(any(feature = "std", feature = "alloc"))]
 pub use tinystrauto::TinyStrAuto;
 
+#[cfg(feature = "macros")]
+pub use tinystr_macros as macros;
+
 /// Enum to store the various types of errors that can cause parsing a TinyStr to fail.
 #[derive(PartialEq, Eq, Debug)]
 pub enum Error {
