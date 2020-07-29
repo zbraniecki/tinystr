@@ -110,9 +110,7 @@ fn construct_from_bytes(c: &mut Criterion) {
 
     c.bench_functions("construct_from_bytes/8", funcs, STRINGS_8);
 
-    let funcs = vec![
-        Fun::new("TinyStr16", cfu!(TinyStr16)),
-    ];
+    let funcs = vec![Fun::new("TinyStr16", cfu!(TinyStr16))];
 
     c.bench_functions("construct_from_bytes/16", funcs, STRINGS_16);
 }
