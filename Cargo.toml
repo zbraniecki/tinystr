@@ -13,8 +13,13 @@ keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
 
 [features]
-default = [ "std" ] # Default to using the std
+default = [ "std" ]
+
+# Use the standard library. Enables TinyStrAuto.
 std = []
+
+# Use the `alloc` crate. Enables TinyStrAuto. This feature does nothing if std is enabled.
+alloc = []
 
 [dev-dependencies]
 criterion = "0.3"

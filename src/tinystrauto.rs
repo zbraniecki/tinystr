@@ -2,9 +2,9 @@ use std::fmt;
 use std::ops::Deref;
 use std::str::FromStr;
 
+use crate::helpers::String;
 use crate::Error;
 use crate::TinyStr16;
-use crate::helpers::String;
 
 /// An ASCII string that is tiny when <= 16 chars and a String otherwise.
 ///
@@ -20,13 +20,15 @@ use crate::helpers::String;
 /// ```
 #[derive(Clone, PartialEq, Eq, Hash, PartialOrd, Ord, Debug)]
 pub enum TinyStrAuto {
+    /// Up to 16 characters stored on the stack.
     Tiny(TinyStr16),
-    Long(String),
+    /// 17 or more characters stored on the heap.
+    Heap(String),
 }
 
 impl fmt::Display for TinyStrAuto {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.deref())
+        self.deref().fmt(f)
     }
 }
 
@@ -37,7 +39,7 @@ impl Deref for TinyStrAuto {
         use TinyStrAuto::*;
         match self {
             Tiny(value) => value.deref(),
-            Long(value) => value.deref(),
+            Heap(value) => value.deref(),
         }
     }
 }
@@ -59,10 +61,10 @@ impl FromStr for TinyStrAuto {
             }
         } else {
             if !text.is_ascii() {
-                return Err(Error::NonAscii)
+                return Err(Error::NonAscii);
             }
             match String::from_str(text) {
-                Ok(result) => Ok(TinyStrAuto::Long(result)),
+                Ok(result) => Ok(TinyStrAuto::Heap(result)),
                 Err(_) => unreachable!(),
             }
         }
