@@ -1,8 +1,16 @@
 [package]
 name = "tinystr-macros"
+description = """
+Proc macros for TinyStr.
+"""
 version = "0.1.0"
 authors = ["Zibi Braniecki <zibi@braniecki.net>"]
 edition = "2018"
+license = "Apache-2.0/MIT"
+repository = "https://github.com/zbraniecki/tinystr"
+readme = "README.md"
+keywords = ["string", "str", "small", "tiny", "no_std"]
+categories = ["data-structures"]
 
 [lib]
 proc_macro = true
