@@ -31,42 +31,40 @@
 //! ```
 //! use tinystr::{TinyStr4, TinyStr8, TinyStr16, TinyStrAuto};
 //!
-//! fn main() {
-//!    let s1: TinyStr4 = "tEsT".parse()
-//!         .expect("Failed to parse.");
+//! let s1: TinyStr4 = "tEsT".parse()
+//!     .expect("Failed to parse.");
 //!
-//!     assert_eq!(s1, "tEsT");
-//!     assert_eq!(s1.to_ascii_uppercase(), "TEST");
-//!     assert_eq!(s1.to_ascii_lowercase(), "test");
-//!     assert_eq!(s1.to_ascii_titlecase(), "Test");
-//!     assert_eq!(s1.is_ascii_alphanumeric(), true);
+//! assert_eq!(s1, "tEsT");
+//! assert_eq!(s1.to_ascii_uppercase(), "TEST");
+//! assert_eq!(s1.to_ascii_lowercase(), "test");
+//! assert_eq!(s1.to_ascii_titlecase(), "Test");
+//! assert_eq!(s1.is_ascii_alphanumeric(), true);
 //!
-//!     let s2: TinyStr8 = "New York".parse()
-//!         .expect("Failed to parse.");
+//! let s2: TinyStr8 = "New York".parse()
+//!      .expect("Failed to parse.");
 //!
-//!     assert_eq!(s2, "New York");
-//!     assert_eq!(s2.to_ascii_uppercase(), "NEW YORK");
-//!     assert_eq!(s2.to_ascii_lowercase(), "new york");
-//!     assert_eq!(s2.to_ascii_titlecase(), "New york");
-//!     assert_eq!(s2.is_ascii_alphanumeric(), false);
+//! assert_eq!(s2, "New York");
+//! assert_eq!(s2.to_ascii_uppercase(), "NEW YORK");
+//! assert_eq!(s2.to_ascii_lowercase(), "new york");
+//! assert_eq!(s2.to_ascii_titlecase(), "New york");
+//! assert_eq!(s2.is_ascii_alphanumeric(), false);
 //!
-//!     let s3: TinyStr16 = "metaMoRphosis123".parse()
-//!         .expect("Failed to parse.");
+//! let s3: TinyStr16 = "metaMoRphosis123".parse()
+//!     .expect("Failed to parse.");
 //!
-//!     assert_eq!(s3, "metaMoRphosis123");
-//!     assert_eq!(s3.to_ascii_uppercase(), "METAMORPHOSIS123");
-//!     assert_eq!(s3.to_ascii_lowercase(), "metamorphosis123");
-//!     assert_eq!(s3.to_ascii_titlecase(), "Metamorphosis123");
-//!     assert_eq!(s3.is_ascii_alphanumeric(), true);
+//! assert_eq!(s3, "metaMoRphosis123");
+//! assert_eq!(s3.to_ascii_uppercase(), "METAMORPHOSIS123");
+//! assert_eq!(s3.to_ascii_lowercase(), "metamorphosis123");
+//! assert_eq!(s3.to_ascii_titlecase(), "Metamorphosis123");
+//! assert_eq!(s3.is_ascii_alphanumeric(), true);
 //!
-//!     let s4: TinyStrAuto = "shortNoAlloc".parse().unwrap();
-//!     assert!(matches!(s4, TinyStrAuto::Tiny { .. }));
-//!     assert_eq!(s4, "shortNoAlloc");
+//! let s4: TinyStrAuto = "shortNoAlloc".parse().unwrap();
+//! assert!(matches!(s4, TinyStrAuto::Tiny { .. }));
+//! assert_eq!(s4, "shortNoAlloc");
 //!
-//!     let s5: TinyStrAuto = "longFallbackToHeap".parse().unwrap();
-//!     assert!(matches!(s5, TinyStrAuto::Heap { .. }));
-//!     assert_eq!(s5, "longFallbackToHeap");
-//! }
+//! let s5: TinyStrAuto = "longFallbackToHeap".parse().unwrap();
+//! assert!(matches!(s5, TinyStrAuto::Heap { .. }));
+//! assert_eq!(s5, "longFallbackToHeap");
 //! ```
 
 #![no_std]
