@@ -13,7 +13,7 @@ keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
 
 [dependencies]
-tinystr-macros = { path = "./macros", optional = true }
+tinystr-macros = { version = "0.1", path = "./macros", optional = true }
 
 [dev-dependencies]
 criterion = "0.3"
