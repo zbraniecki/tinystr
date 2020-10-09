@@ -75,7 +75,6 @@ extern crate std;
 #[cfg(all(not(feature = "std"), not(test)))]
 extern crate core as std;
 
-mod helpers;
 mod tinystr16;
 mod tinystr4;
 mod tinystr8;
@@ -90,16 +89,4 @@ pub use tinystr8::TinyStr8;
 #[cfg(any(feature = "std", feature = "alloc"))]
 pub use tinystrauto::TinyStrAuto;
 
-#[cfg(feature = "macros")]
-pub use tinystr_macros as macros;
-
-/// Enum to store the various types of errors that can cause parsing a TinyStr to fail.
-#[derive(PartialEq, Eq, Debug)]
-pub enum Error {
-    /// String is too large or too small to store as TinyStr.
-    InvalidSize,
-    /// String is empty.
-    InvalidNull,
-    /// String contains non-ASCII character(s).
-    NonAscii,
-}
+pub use tinystr_raw::Error;

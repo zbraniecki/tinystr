@@ -5,7 +5,6 @@ use std::num::NonZeroU32;
 use std::ops::Deref;
 use std::str::FromStr;
 
-use crate::helpers::make_4byte_bytes;
 use crate::Error;
 
 /// A tiny string that is from 1 to 4 non-NUL ASCII characters.
@@ -39,15 +38,7 @@ impl TinyStr4 {
     /// ```
     #[inline(always)]
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, Error> {
-        unsafe {
-            match bytes.len() {
-                1 => make_4byte_bytes(bytes, 1, 0x80).map(Self),
-                2 => make_4byte_bytes(bytes, 2, 0x8080).map(Self),
-                3 => make_4byte_bytes(bytes, 3, 0x0080_8080).map(Self),
-                4 => make_4byte_bytes(bytes, 4, 0x8080_8080).map(Self),
-                _ => Err(Error::InvalidSize),
-            }
-        }
+        tinystr_raw::u32_from_bytes(bytes).map(Self)
     }
 
     /// An unsafe constructor intended for cases where the consumer

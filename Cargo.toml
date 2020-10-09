@@ -14,6 +14,7 @@ categories = ["data-structures"]
 
 [dependencies]
 tinystr-macros = { version = "0.1", path = "./macros", optional = true }
+tinystr-raw = { path = "./raw" }
 
 [dev-dependencies]
 criterion = "0.3"
