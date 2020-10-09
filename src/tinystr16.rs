@@ -3,7 +3,6 @@ use std::convert::Into;
 use std::fmt;
 use std::num::NonZeroU128;
 use std::ops::Deref;
-use std::ptr::copy_nonoverlapping;
 use std::str::FromStr;
 
 use crate::Error;
@@ -39,25 +38,7 @@ impl TinyStr16 {
     /// ```
     #[inline(always)]
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, Error> {
-        let len = bytes.len();
-        if len < 1 || len > 16 {
-            return Err(Error::InvalidSize);
-        }
-        unsafe {
-            let mut word: u128 = 0;
-            copy_nonoverlapping(bytes.as_ptr(), &mut word as *mut u128 as *mut u8, len);
-            let mask = 0x80808080_80808080_80808080_80808080u128 >> (8 * (16 - len));
-            // TODO: could do this with #cfg(target_endian), but this is clearer and
-            // more confidence-inspiring.
-            let mask = u128::from_le(mask);
-            if (word & mask) != 0 {
-                return Err(Error::NonAscii);
-            }
-            if ((mask - word) & mask) != 0 {
-                return Err(Error::InvalidNull);
-            }
-            Ok(Self(NonZeroU128::new_unchecked(word)))
-        }
+        tinystr_raw::u128_from_bytes(bytes).map(Self)
     }
 
     /// An unsafe constructor intended for cases where the consumer

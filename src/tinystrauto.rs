@@ -2,9 +2,17 @@ use std::fmt;
 use std::ops::Deref;
 use std::str::FromStr;
 
-use crate::helpers::String;
 use crate::Error;
 use crate::TinyStr16;
+
+#[cfg(any(feature = "std", test))]
+pub use std::string::String;
+
+#[cfg(all(not(feature = "std"), not(test)))]
+extern crate alloc;
+
+#[cfg(all(not(feature = "std"), not(test)))]
+pub use alloc::string::String;
 
 /// An ASCII string that is tiny when <= 16 chars and a String otherwise.
 ///
