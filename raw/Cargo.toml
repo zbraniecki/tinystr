@@ -4,7 +4,7 @@ description = """
 Raw string-to-integer conversions for tinystr.
 """
 version = "0.1.0"
-authors = ["Zibi Braniecki <zibi@braniecki.net>", "Shane Carr <shane@sffc.xyz>"]
+authors = ["Zibi Braniecki <zibi@braniecki.net>", "Shane F. Carr <shane@sffc.xyz>"]
 edition = "2018"
 license = "Apache-2.0/MIT"
 repository = "https://github.com/zbraniecki/tinystr"

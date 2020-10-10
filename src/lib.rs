@@ -5,7 +5,7 @@
 //!
 //! `tinystr` converts each string into an unsigned integer, and uses bitmasking
 //! to compare, convert cases and test for common characteristics of strings.
-//! 
+//!
 //! # Details
 //!
 //! The crate provides three structs and an enum:
@@ -21,6 +21,13 @@
 //! or smaller, but occasionally you receive one that exceeds that length. Unlike the structs,
 //! `TinyStrAuto` does not implement `Copy`.
 //!
+//! # Macros
+//!
+//! Compile-time macros are available to convert string literals into const TinyStrs:
+//! * `tinystr4!("abc")`
+//! * `tinystr8!("abcdefg")`
+//! * `tinystr16!("longer-string")`
+//!
 //! # no_std
 //!
 //! Disable the `std` feature of this crate to make it `#[no_std]`. Doing so disables `TinyStrAuto`.
@@ -30,9 +37,9 @@
 //!
 //! ```
 //! use tinystr::{TinyStr4, TinyStr8, TinyStr16, TinyStrAuto};
+//! use tinystr::{tinystr4, tinystr8, tinystr16};
 //!
-//! let s1: TinyStr4 = "tEsT".parse()
-//!     .expect("Failed to parse.");
+//! let s1: TinyStr4 = tinystr4!("tEsT");
 //!
 //! assert_eq!(s1, "tEsT");
 //! assert_eq!(s1.to_ascii_uppercase(), "TEST");
@@ -40,8 +47,7 @@
 //! assert_eq!(s1.to_ascii_titlecase(), "Test");
 //! assert_eq!(s1.is_ascii_alphanumeric(), true);
 //!
-//! let s2: TinyStr8 = "New York".parse()
-//!      .expect("Failed to parse.");
+//! let s2: TinyStr8 = tinystr8!("New York");
 //!
 //! assert_eq!(s2, "New York");
 //! assert_eq!(s2.to_ascii_uppercase(), "NEW YORK");
@@ -49,8 +55,7 @@
 //! assert_eq!(s2.to_ascii_titlecase(), "New york");
 //! assert_eq!(s2.is_ascii_alphanumeric(), false);
 //!
-//! let s3: TinyStr16 = "metaMoRphosis123".parse()
-//!     .expect("Failed to parse.");
+//! let s3: TinyStr16 = tinystr16!("metaMoRphosis123");
 //!
 //! assert_eq!(s3, "metaMoRphosis123");
 //! assert_eq!(s3.to_ascii_uppercase(), "METAMORPHOSIS123");
@@ -58,11 +63,13 @@
 //! assert_eq!(s3.to_ascii_titlecase(), "Metamorphosis123");
 //! assert_eq!(s3.is_ascii_alphanumeric(), true);
 //!
-//! let s4: TinyStrAuto = "shortNoAlloc".parse().unwrap();
+//! let s4: TinyStrAuto = "shortNoAlloc".parse()
+//!     .expect("Failed to parse.");
 //! assert!(matches!(s4, TinyStrAuto::Tiny { .. }));
 //! assert_eq!(s4, "shortNoAlloc");
 //!
-//! let s5: TinyStrAuto = "longFallbackToHeap".parse().unwrap();
+//! let s5: TinyStrAuto = "longFallbackToHeap".parse()
+//!     .expect("Failed to parse.");
 //! assert!(matches!(s5, TinyStrAuto::Heap { .. }));
 //! assert_eq!(s5, "longFallbackToHeap");
 //! ```
@@ -75,6 +82,7 @@ extern crate std;
 #[cfg(all(not(feature = "std"), not(test)))]
 extern crate core as std;
 
+mod macros;
 mod tinystr16;
 mod tinystr4;
 mod tinystr8;

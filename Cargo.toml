@@ -4,7 +4,7 @@ description = """
 A small ASCII-only bounded length string representation.
 """
 version = "0.3.4"
-authors = ["Raph Levien <raph.levien@gmail.com>", "Zibi Braniecki <zibi@braniecki.net>"]
+authors = ["Raph Levien <raph.levien@gmail.com>", "Zibi Braniecki <zibi@braniecki.net>", "Shane F. Carr <shane@sffc.xyz>"]
 edition = "2018"
 license = "Apache-2.0/MIT"
 repository = "https://github.com/zbraniecki/tinystr"
@@ -13,8 +13,8 @@ keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
 
 [dependencies]
-tinystr-macros = { version = "0.1", path = "./macros", optional = true }
-tinystr-raw = { path = "./raw" }
+tinystr-macros = { version = "0.1", path = "./macros" }
+tinystr-raw = { version = "0.1", path = "./raw" }
 
 [dev-dependencies]
 criterion = "0.3"
@@ -27,8 +27,6 @@ std = []
 
 # Use the `alloc` crate. Enables TinyStrAuto. This feature does nothing if std is enabled.
 alloc = []
-
-macros = ["tinystr-macros"]
 
 [[bench]]
 name = "construct"
