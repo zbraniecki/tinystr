@@ -4,6 +4,10 @@
 
   - …
 
+## tinystr 0.4.0 (October 12, 2020)
+
+  - Improve macros ergonomics by separating `tinystr-raw` crate.
+
 ## tinystr 0.3.4 (August 21, 2020)
 
   - Add `macros` feature which exposes `tinystr::macros`.

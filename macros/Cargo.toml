@@ -3,7 +3,7 @@ name = "tinystr-macros"
 description = """
 Proc macros for TinyStr.
 """
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Zibi Braniecki <zibi@braniecki.net>", "Shane F. Carr <shane@sffc.xyz>"]
 edition = "2018"
 license = "Apache-2.0/MIT"
@@ -16,5 +16,4 @@ categories = ["data-structures"]
 proc_macro = true
 
 [dependencies]
-tinystr = "0.3"
-tinystr-raw = { path = "../raw" }
+tinystr-raw = { version = "0.1", path = "../raw" }
