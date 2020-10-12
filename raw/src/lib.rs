@@ -1,3 +1,7 @@
+//! `tinystr-raw` exports functions to convert byte strings to raw TinyStr data.
+//!
+//! Not intended for public consumption; use `tinystr` instead.
+
 mod error;
 mod helpers;
 
@@ -6,7 +10,7 @@ pub use error::Error;
 use std::num::{NonZeroU32, NonZeroU64, NonZeroU128};
 
 #[inline(always)]
-pub fn u32_from_bytes(bytes: &[u8]) -> Result<NonZeroU32, Error> {
+pub fn try_u32_from_bytes(bytes: &[u8]) -> Result<NonZeroU32, Error> {
     unsafe {
         match bytes.len() {
             1 => helpers::make_u32_bytes(bytes, 1, 0x80),
@@ -27,7 +31,7 @@ fn test_u32_from_bytes() {
 }
 
 #[inline(always)]
-pub fn u64_from_bytes(bytes: &[u8]) -> Result<NonZeroU64, Error> {
+pub fn try_u64_from_bytes(bytes: &[u8]) -> Result<NonZeroU64, Error> {
     let len = bytes.len();
     if len < 1 || len > 8 {
         return Err(Error::InvalidSize);
@@ -47,7 +51,7 @@ fn test_u64_from_bytes() {
 }
 
 #[inline(always)]
-pub fn u128_from_bytes(bytes: &[u8]) -> Result<NonZeroU128, Error> {
+pub fn try_u128_from_bytes(bytes: &[u8]) -> Result<NonZeroU128, Error> {
     let len = bytes.len();
     if len < 1 || len > 16 {
         return Err(Error::InvalidSize);

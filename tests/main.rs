@@ -25,7 +25,7 @@ fn tiny4_basic() {
 
 #[test]
 fn tiny4_from_bytes() {
-    let s = TinyStr4::from_bytes("abc".as_bytes()).unwrap();
+    let s = TinyStr4::from_bytes(b"abc").unwrap();
     assert_eq!(s.deref(), "abc");
 
     assert_eq!(
@@ -174,7 +174,7 @@ fn tiny8_basic() {
 
 #[test]
 fn tiny8_from_bytes() {
-    let s = TinyStr8::from_bytes("abcde".as_bytes()).unwrap();
+    let s = TinyStr8::from_bytes(b"abcde").unwrap();
     assert_eq!(s.deref(), "abcde");
 
     assert_eq!(
@@ -326,7 +326,7 @@ fn tiny8_debug() {
 
 #[test]
 fn tiny16_from_bytes() {
-    let s = TinyStr16::from_bytes("abcdefghijk".as_bytes()).unwrap();
+    let s = TinyStr16::from_bytes(b"abcdefghijk").unwrap();
     assert_eq!(s.deref(), "abcdefghijk");
 
     assert_eq!(

@@ -96,7 +96,6 @@ fn convert_to_ascii_uppercase(c: &mut Criterion) {
 }
 
 trait ExtToAsciiTitlecase {
-    #[inline(always)]
     fn to_ascii_titlecase(&self) -> String;
 }
 
@@ -119,7 +118,6 @@ fn convert_to_ascii_titlecase(c: &mut Criterion) {
 }
 
 trait ExtIsAsciiAlphanumeric {
-    #[inline(always)]
     fn is_ascii_alphanumeric(&self) -> bool;
 }
 

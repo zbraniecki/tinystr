@@ -1,19 +1,19 @@
-use tinystr::*;
 use tinystr_macros::*;
 
-const TS: TinyStr8 = tinystr8!("test");
+#[test]
+fn test_u32() {
+    const VALUE: u32 = u32_from_bytes!("aabb");
+    assert_eq!(0x62626161, VALUE);
+}
 
 #[test]
-fn test_macros() {
-    let x: TinyStr8 = "test".parse().unwrap();
-    assert_eq!(TS, x);
+fn test_u64() {
+    const VALUE: u64 = u64_from_bytes!("aaaabbbb");
+    assert_eq!(0x6262626261616161, VALUE);
+}
 
-    let x: TinyStr4 = "foo".parse().unwrap();
-    assert_eq!(tinystr4!("foo"), x);
-
-    let x: TinyStr8 = "barbaz".parse().unwrap();
-    assert_eq!(tinystr8!("barbaz"), x);
-
-    let x: TinyStr16 = "metamorphosis".parse().unwrap();
-    assert_eq!(tinystr16!("metamorphosis"), x);
+#[test]
+fn test_u128() {
+    const VALUE: u128 = u128_from_bytes!("aaaaaaaabbbbbbbb");
+    assert_eq!(0x62626262626262626161616161616161, VALUE);
 }

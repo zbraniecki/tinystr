@@ -38,7 +38,7 @@ impl TinyStr16 {
     /// ```
     #[inline(always)]
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, Error> {
-        tinystr_raw::u128_from_bytes(bytes).map(Self)
+        tinystr_raw::try_u128_from_bytes(bytes).map(Self)
     }
 
     /// An unsafe constructor intended for cases where the consumer
