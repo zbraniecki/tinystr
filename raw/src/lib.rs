@@ -26,7 +26,7 @@ pub fn try_u32_from_bytes(bytes: &[u8]) -> Result<NonZeroU32, Error> {
 fn test_u32_from_bytes() {
     assert_eq!(
         NonZeroU32::new(0x62626161).unwrap(),
-        u32_from_bytes(b"aabb").unwrap()
+        try_u32_from_bytes(b"aabb").unwrap()
     );
 }
 
@@ -46,7 +46,7 @@ pub fn try_u64_from_bytes(bytes: &[u8]) -> Result<NonZeroU64, Error> {
 fn test_u64_from_bytes() {
     assert_eq!(
         NonZeroU64::new(0x6262626261616161).unwrap(),
-        u64_from_bytes(b"aaaabbbb").unwrap()
+        try_u64_from_bytes(b"aaaabbbb").unwrap()
     );
 }
 
@@ -66,6 +66,6 @@ pub fn try_u128_from_bytes(bytes: &[u8]) -> Result<NonZeroU128, Error> {
 fn test_u128_from_bytes() {
     assert_eq!(
         NonZeroU128::new(0x62626262626262626161616161616161).unwrap(),
-        u128_from_bytes(b"aaaaaaaabbbbbbbb").unwrap()
+        try_u128_from_bytes(b"aaaaaaaabbbbbbbb").unwrap()
     );
 }
