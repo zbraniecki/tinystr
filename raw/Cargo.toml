@@ -8,6 +8,5 @@ authors = ["Zibi Braniecki <zibi@braniecki.net>", "Shane F. Carr <shane@sffc.xyz
 edition = "2018"
 license = "Apache-2.0/MIT"
 repository = "https://github.com/zbraniecki/tinystr"
-readme = "README.md"
 keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
