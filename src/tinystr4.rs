@@ -88,6 +88,28 @@ impl TinyStr4 {
         self.deref()
     }
 
+    /// Gets a representation of this TinyStr4 as a primitive.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::{tinystr4, TinyStr4};
+    ///
+    /// const fn const_equals(a: TinyStr4, b: TinyStr4) -> bool {
+    ///     a.as_unsigned() == b.as_unsigned()
+    /// }
+    ///
+    /// const S1: TinyStr4 = tinystr4!("foo");
+    /// const S2: TinyStr4 = tinystr4!("foo");
+    /// const S3: TinyStr4 = tinystr4!("bar");
+    ///
+    /// assert!(const_equals(S1, S2));
+    /// assert!(!const_equals(S1, S3));
+    /// ```
+    pub const fn as_unsigned(&self) -> u32 {
+        self.0.get()
+    }
+
     /// Checks if the value is composed of ASCII alphabetic characters:
     ///
     ///  * U+0041 'A' ..= U+005A 'Z', or
@@ -106,7 +128,7 @@ impl TinyStr4 {
     /// assert!(s1.is_ascii_alphabetic());
     /// assert!(!s2.is_ascii_alphabetic());
     /// ```
-    pub fn is_ascii_alphabetic(self) -> bool {
+    pub const fn is_ascii_alphabetic(self) -> bool {
         let word = self.0.get();
         let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
         let lower = word | 0x2020_2020;
@@ -133,7 +155,7 @@ impl TinyStr4 {
     /// assert!(s1.is_ascii_alphanumeric());
     /// assert!(!s2.is_ascii_alphanumeric());
     /// ```
-    pub fn is_ascii_alphanumeric(self) -> bool {
+    pub const fn is_ascii_alphanumeric(self) -> bool {
         let word = self.0.get();
         let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
         let numeric = !(word + 0x5050_5050) | (word + 0x4646_4646);
@@ -159,7 +181,7 @@ impl TinyStr4 {
     /// assert!(s1.is_ascii_numeric());
     /// assert!(!s2.is_ascii_numeric());
     /// ```
-    pub fn is_ascii_numeric(self) -> bool {
+    pub const fn is_ascii_numeric(self) -> bool {
         let word = self.0.get();
         let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
         let numeric = !(word + 0x5050_5050) | (word + 0x4646_4646);
@@ -180,7 +202,7 @@ impl TinyStr4 {
     ///
     /// assert_eq!(s1.to_ascii_lowercase(), "tes3");
     /// ```
-    pub fn to_ascii_lowercase(self) -> Self {
+    pub const fn to_ascii_lowercase(self) -> Self {
         let word = self.0.get();
         let result = word | (((word + 0x3f3f_3f3f) & !(word + 0x2525_2525) & 0x8080_8080) >> 2);
         unsafe { Self(NonZeroU32::new_unchecked(result)) }
@@ -201,7 +223,7 @@ impl TinyStr4 {
     ///
     /// assert_eq!(s1.to_ascii_titlecase(), "Test");
     /// ```
-    pub fn to_ascii_titlecase(self) -> Self {
+    pub const fn to_ascii_titlecase(self) -> Self {
         let word = self.0.get().to_le();
         let mask = ((word + 0x3f3f_3f1f) & !(word + 0x2525_2505) & 0x8080_8080) >> 2;
         let result = (word | mask) & !(0x20 & mask);
@@ -222,7 +244,7 @@ impl TinyStr4 {
     ///
     /// assert_eq!(s1.to_ascii_uppercase(), "TES3");
     /// ```
-    pub fn to_ascii_uppercase(self) -> Self {
+    pub const fn to_ascii_uppercase(self) -> Self {
         let word = self.0.get();
         let result = word & !(((word + 0x1f1f_1f1f) & !(word + 0x0505_0505) & 0x8080_8080) >> 2);
         unsafe { Self(NonZeroU32::new_unchecked(result)) }
