@@ -88,6 +88,28 @@ impl TinyStr16 {
         self.deref()
     }
 
+    /// Gets a representation of this TinyStr16 as a primitive.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::{tinystr16, TinyStr16};
+    ///
+    /// const fn const_equals(a: TinyStr16, b: TinyStr16) -> bool {
+    ///     a.as_unsigned() == b.as_unsigned()
+    /// }
+    ///
+    /// const S1: TinyStr16 = tinystr16!("foo");
+    /// const S2: TinyStr16 = tinystr16!("foo");
+    /// const S3: TinyStr16 = tinystr16!("bar");
+    ///
+    /// assert!(const_equals(S1, S2));
+    /// assert!(!const_equals(S1, S3));
+    /// ```
+    pub const fn as_unsigned(&self) -> u128 {
+        self.0.get()
+    }
+
     /// Checks if the value is composed of ASCII alphabetic characters:
     ///
     ///  * U+0041 'A' ..= U+005A 'Z', or
@@ -106,7 +128,7 @@ impl TinyStr16 {
     /// assert!(s1.is_ascii_alphabetic());
     /// assert!(!s2.is_ascii_alphabetic());
     /// ```
-    pub fn is_ascii_alphabetic(self) -> bool {
+    pub const fn is_ascii_alphabetic(self) -> bool {
         let word = self.0.get();
         let mask =
             (word + 0x7f7f7f7f_7f7f7f7f_7f7f7f7f_7f7f7f7f) & 0x80808080_80808080_80808080_80808080;
@@ -135,7 +157,7 @@ impl TinyStr16 {
     /// assert!(s1.is_ascii_alphanumeric());
     /// assert!(!s2.is_ascii_alphanumeric());
     /// ```
-    pub fn is_ascii_alphanumeric(self) -> bool {
+    pub const fn is_ascii_alphanumeric(self) -> bool {
         let word = self.0.get();
         let mask =
             (word + 0x7f7f7f7f_7f7f7f7f_7f7f7f7f_7f7f7f7f) & 0x80808080_80808080_80808080_80808080;
@@ -164,7 +186,7 @@ impl TinyStr16 {
     /// assert!(s1.is_ascii_numeric());
     /// assert!(!s2.is_ascii_numeric());
     /// ```
-    pub fn is_ascii_numeric(self) -> bool {
+    pub const fn is_ascii_numeric(self) -> bool {
         let word = self.0.get();
         let mask =
             (word + 0x7f7f7f7f_7f7f7f7f_7f7f7f7f_7f7f7f7f) & 0x80808080_80808080_80808080_80808080;
@@ -187,7 +209,7 @@ impl TinyStr16 {
     ///
     /// assert_eq!(s1.to_ascii_lowercase(), "metamorpho3sis");
     /// ```
-    pub fn to_ascii_lowercase(self) -> Self {
+    pub const fn to_ascii_lowercase(self) -> Self {
         let word = self.0.get();
         let result = word
             | (((word + 0x3f3f3f3f_3f3f3f3f_3f3f3f3f_3f3f3f3f)
@@ -212,7 +234,7 @@ impl TinyStr16 {
     ///
     /// assert_eq!(s1.to_ascii_titlecase(), "Metamorphosis");
     /// ```
-    pub fn to_ascii_titlecase(self) -> Self {
+    pub const fn to_ascii_titlecase(self) -> Self {
         let word = self.0.get().to_le();
         let mask = ((word + 0x3f3f3f3f_3f3f3f3f_3f3f3f3f_3f3f3f1f)
             & !(word + 0x25252525_25252525_25252525_25252505)
@@ -236,7 +258,7 @@ impl TinyStr16 {
     ///
     /// assert_eq!(s1.to_ascii_uppercase(), "MET3AMORPHOSIS");
     /// ```
-    pub fn to_ascii_uppercase(self) -> Self {
+    pub const fn to_ascii_uppercase(self) -> Self {
         let word = self.0.get();
         let result = word
             & !(((word + 0x1f1f1f1f_1f1f1f1f_1f1f1f1f_1f1f1f1f)
