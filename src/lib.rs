@@ -87,6 +87,9 @@ mod tinystr16;
 mod tinystr4;
 mod tinystr8;
 
+/// Re-export of the low-level tinystr_macros crate, required by the macros.
+pub use tinystr_macros as raw_macros;
+
 #[cfg(any(feature = "std", feature = "alloc"))]
 mod tinystrauto;
 
