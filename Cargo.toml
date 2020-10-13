@@ -3,7 +3,7 @@ name = "tinystr"
 description = """
 A small ASCII-only bounded length string representation.
 """
-version = "0.4.0"
+version = "0.4.1"
 authors = ["Raph Levien <raph.levien@gmail.com>", "Zibi Braniecki <zibi@braniecki.net>", "Shane F. Carr <shane@sffc.xyz>"]
 edition = "2018"
 license = "Apache-2.0/MIT"

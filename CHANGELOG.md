@@ -4,6 +4,11 @@
 
   - …
 
+## tinystr 0.4.1 (October 13, 2020)
+
+  - Improve macro re-export.
+  - cont-ify more functions.
+
 ## tinystr 0.4.0 (October 12, 2020)
 
   - Improve macros ergonomics by separating `tinystr-raw` crate.
