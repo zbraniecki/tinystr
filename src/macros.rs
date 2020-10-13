@@ -1,6 +1,3 @@
-/// Re-export of the low-level tinystr_macros crate.
-pub use tinystr_macros;
-
 /// Macro to create a const TinyStr4, validated with zero runtime cost.
 ///
 /// The argument must be a string literal:
@@ -18,9 +15,7 @@ pub use tinystr_macros;
 #[macro_export]
 macro_rules! tinystr4 {
     ($s:literal) => {
-        unsafe {
-            $crate::TinyStr4::new_unchecked($crate::macros::tinystr_macros::u32_from_bytes!($s))
-        }
+        unsafe { $crate::TinyStr4::new_unchecked($crate::raw_macros::u32_from_bytes!($s)) }
     };
 }
 
@@ -49,9 +44,7 @@ fn test_tinystr4() {
 #[macro_export]
 macro_rules! tinystr8 {
     ($s:literal) => {
-        unsafe {
-            $crate::TinyStr8::new_unchecked($crate::macros::tinystr_macros::u64_from_bytes!($s))
-        }
+        unsafe { $crate::TinyStr8::new_unchecked($crate::raw_macros::u64_from_bytes!($s)) }
     };
 }
 
@@ -80,9 +73,7 @@ fn test_tinystr8() {
 #[macro_export]
 macro_rules! tinystr16 {
     ($s:literal) => {
-        unsafe {
-            $crate::TinyStr16::new_unchecked($crate::macros::tinystr_macros::u128_from_bytes!($s))
-        }
+        unsafe { $crate::TinyStr16::new_unchecked($crate::raw_macros::u128_from_bytes!($s)) }
     };
 }
 
