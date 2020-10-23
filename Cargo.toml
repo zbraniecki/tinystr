@@ -35,3 +35,7 @@ harness = false
 [[bench]]
 name = "tinystr"
 harness = false
+
+[[bench]]
+name = "match"
+harness = false
