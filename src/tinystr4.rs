@@ -21,6 +21,7 @@ use crate::Error;
 /// assert!(s1.is_ascii_alphabetic());
 /// ```
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+#[repr(transparent)]
 pub struct TinyStr4(NonZeroU32);
 
 impl TinyStr4 {
