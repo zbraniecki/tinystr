@@ -23,7 +23,7 @@ criterion = "0.3"
 default = [ "std" ] # Default to using the std
 
 # Use the standard library. Enables TinyStrAuto.
-std = []
+std = [ "tinystr-raw/std" ]
 
 # Use the `alloc` crate. Enables TinyStrAuto. This feature does nothing if std is enabled.
 alloc = []
