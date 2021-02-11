@@ -339,10 +339,11 @@ impl<'de> serde::Deserialize<'de> for TinyStr8 {
         D: serde::Deserializer<'de>,
     {
         use std::borrow::Cow;
-        use serde::de::Error;
+        use serde::de::Error as SerdeError;
+        use std::string::ToString;
 
         let x: Cow<'de, str> = serde::Deserialize::deserialize(deserializer)?;
-        x.parse().map_err(|_| Error::custom("TinyStr8 must contain 1-8 non-NUL ASCII bytes"))
+        x.parse().map_err(|e: Error| SerdeError::custom(e.to_string()))
     }
 }
 
