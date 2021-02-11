@@ -329,3 +329,28 @@ impl Into<u128> for TinyStr16 {
         self.0.get().to_le()
     }
 }
+
+#[cfg(feature = "serde")]
+impl serde::Serialize for TinyStr16 {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(self.as_str())
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for TinyStr16 {
+    fn deserialize<D>(deserializer: D) -> Result<TinyStr16, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use std::borrow::Cow;
+        use serde::de::Error;
+
+        let x: Cow<'de, str> = serde::Deserialize::deserialize(deserializer)?;
+        x.parse().map_err(|_| Error::custom("TinyStr16 must contain 1-16 non-NUL ASCII bytes"))
+    }
+}
+
