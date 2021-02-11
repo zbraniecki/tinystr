@@ -78,3 +78,29 @@ impl FromStr for TinyStrAuto {
         }
     }
 }
+
+
+#[cfg(feature = "serde")]
+impl serde::Serialize for TinyStrAuto {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for TinyStrAuto {
+    fn deserialize<D>(deserializer: D) -> Result<TinyStrAuto, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use std::borrow::Cow;
+        use serde::de::Error as SerdeError;
+        use std::string::ToString;
+
+        let x: Cow<'de, str> = serde::Deserialize::deserialize(deserializer)?;
+        x.parse().map_err(|e: Error| SerdeError::custom(e.to_string()))
+    }
+}
