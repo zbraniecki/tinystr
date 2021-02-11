@@ -19,6 +19,7 @@ tinystr-raw = { version = "0.1", path = "./raw" }
 
 [dev-dependencies]
 criterion = "0.3"
+serde_json = "1.0.59"
 
 [features]
 default = [ "std" ] # Default to using the std
@@ -40,3 +41,7 @@ harness = false
 [[bench]]
 name = "match"
 harness = false
+
+[[test]]
+name = "serde"
+required-features = ["serde"]

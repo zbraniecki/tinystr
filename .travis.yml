@@ -18,8 +18,8 @@ before_cache: |
 
 script:
 - cargo clean
-- cargo build
-- cargo test
+- cargo build --features serde
+- cargo test --features serde
 
 
 after_success: |
