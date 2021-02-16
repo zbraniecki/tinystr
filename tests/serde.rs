@@ -11,6 +11,10 @@ macro_rules! test_roundtrip {
             assert_eq!(json_string, expected_json);
             let recover: $ty = serde_json::from_str(&json_string).unwrap();
             assert_eq!(&*tiny, &*recover);
+
+            let bin = bincode::serialize(&tiny).unwrap();
+            let debin: $ty = bincode::deserialize(&bin).unwrap();
+            assert_eq!(&*tiny, &*debin);
         }
     };
 }

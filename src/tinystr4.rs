@@ -318,7 +318,11 @@ impl serde::Serialize for TinyStr4 {
     where
         S: serde::Serializer,
     {
-        serializer.serialize_str(self.as_str())
+        if serializer.is_human_readable() {
+            serializer.serialize_str(self.as_str())
+        } else {
+            serializer.serialize_u32(self.as_unsigned().to_le())
+        }
     }
 }
 
@@ -332,7 +336,19 @@ impl<'de> serde::Deserialize<'de> for TinyStr4 {
         use serde::de::Error as SerdeError;
         use std::string::ToString;
 
-        let x: Cow<'de, str> = serde::Deserialize::deserialize(deserializer)?;
-        x.parse().map_err(|e: Error| SerdeError::custom(e.to_string()))
+        if deserializer.is_human_readable() {
+            let x: Cow<'de, str> = serde::Deserialize::deserialize(deserializer)?;
+            x.parse().map_err(|e: Error| SerdeError::custom(e.to_string()))
+        } else {
+            // little-endian
+            let le = serde::Deserialize::deserialize(deserializer)?;
+            let bytes = u32::from_le(le).to_ne_bytes();
+            if let Err(e) = std::str::from_utf8(&bytes) {
+                return Err(SerdeError::custom(e.to_string()))
+            }
+            unsafe {
+                Ok(Self::new_unchecked(le))
+            }
+        }
     }
 }
