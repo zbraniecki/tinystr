@@ -82,6 +82,7 @@ extern crate std;
 #[cfg(all(not(feature = "std"), not(test)))]
 extern crate core as std;
 
+#[macro_use]
 mod macros;
 mod tinystr16;
 mod tinystr4;

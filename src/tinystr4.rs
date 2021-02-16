@@ -312,43 +312,4 @@ impl Into<u32> for TinyStr4 {
     }
 }
 
-#[cfg(feature = "serde")]
-impl serde::Serialize for TinyStr4 {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        if serializer.is_human_readable() {
-            serializer.serialize_str(self.as_str())
-        } else {
-            serializer.serialize_u32(self.as_unsigned().to_le())
-        }
-    }
-}
-
-#[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for TinyStr4 {
-    fn deserialize<D>(deserializer: D) -> Result<TinyStr4, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        use std::borrow::Cow;
-        use serde::de::Error as SerdeError;
-        use std::string::ToString;
-
-        if deserializer.is_human_readable() {
-            let x: Cow<'de, str> = serde::Deserialize::deserialize(deserializer)?;
-            x.parse().map_err(|e: Error| SerdeError::custom(e.to_string()))
-        } else {
-            // little-endian
-            let le = serde::Deserialize::deserialize(deserializer)?;
-            let bytes = u32::from_le(le).to_ne_bytes();
-            if let Err(e) = std::str::from_utf8(&bytes) {
-                return Err(SerdeError::custom(e.to_string()))
-            }
-            unsafe {
-                Ok(Self::new_unchecked(le))
-            }
-        }
-    }
-}
+serde_impl!(TinyStr4, u32);

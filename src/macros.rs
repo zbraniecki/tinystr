@@ -77,6 +77,50 @@ macro_rules! tinystr16 {
     };
 }
 
+// Internal macro for implementing Serialize/Deserialize
+macro_rules! serde_impl {
+    ($ty:ident, $int:ident) => {
+        #[cfg(feature = "serde")]
+        impl serde::Serialize for $ty {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::Serializer,
+            {
+                if serializer.is_human_readable() {
+                    serializer.serialize_str(self.as_str())
+                } else {
+                    self.as_unsigned().to_le().serialize(serializer)
+                }
+            }
+        }
+
+        #[cfg(feature = "serde")]
+        impl<'de> serde::Deserialize<'de> for $ty {
+            fn deserialize<D>(deserializer: D) -> Result<$ty, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                use std::borrow::Cow;
+                use serde::de::Error as SerdeError;
+                use std::string::ToString;
+
+                if deserializer.is_human_readable() {
+                    let x: Cow<'de, str> = serde::Deserialize::deserialize(deserializer)?;
+                    x.parse().map_err(|e: Error| SerdeError::custom(e.to_string()))
+                } else {
+                    // little-endian
+                    let le = serde::Deserialize::deserialize(deserializer)?;
+                    let bytes = $int::from_le(le).to_ne_bytes();
+                    let bytes = bytes.split(|t| *t == 0).next()
+                                     .ok_or_else(|| SerdeError::custom(concat!("Empty string found for ",
+                                                                               stringify!($ty))))?;
+                    <$ty>::from_bytes(&bytes).map_err(|e| SerdeError::custom(e.to_string()))
+                }
+            }
+        }
+
+    };
+}
 #[test]
 fn test_tinystr16() {
     use crate::TinyStr16;
