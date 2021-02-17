@@ -1,0 +1,40 @@
+name: Rust CI
+on: [push]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          # Little-endian:
+          - x86_64-unknown-linux-gnu
+          # Big-endian:
+          - powerpc-unknown-linux-gnu
+        directory:
+          - .
+          - raw
+          - macros
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/cargo@v1.0.1
+        name: Check (No Features)
+        with:
+          command: check
+          use-cross: true
+          args: --all-targets --no-default-features --target ${{ matrix.target }}
+      - uses: actions-rs/cargo@v1.0.1
+        name: Check (All Features)
+        with:
+          command: check
+          use-cross: true
+          args: --all-targets --all-features --target ${{ matrix.target }}
+      - uses: actions-rs/cargo@v1.0.1
+        name: Test
+        with:
+          command: test
+          use-cross: true
+          args: --all-features --target ${{ matrix.target }}
