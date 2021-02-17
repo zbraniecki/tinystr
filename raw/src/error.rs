@@ -18,12 +18,11 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::InvalidSize => write!(f, "invalid size"),
-            Error::InvalidNull =>  write!(f, "string is empty"),
+            Error::InvalidNull => write!(f, "string is empty"),
             Error::NonAscii => write!(f, "contains non-ASCII"),
         }
     }
 }
 
 #[cfg(feature = "std")]
-impl error::Error for Error {
-}
+impl error::Error for Error {}

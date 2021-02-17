@@ -11,9 +11,10 @@ fn tiny_sizes() {
     assert_eq!(4, size_of::<TinyStr4>());
     assert_eq!(8, size_of::<TinyStr8>());
     assert_eq!(16, size_of::<TinyStr16>());
+    #[cfg(target_pointer_width = "64")]
     assert_eq!(24, size_of::<String>());
     // Note: TinyStrAuto is size 32 even when a smaller TinyStr type is used
-    #[cfg(any(feature = "std", feature = "alloc"))]
+    #[cfg(all(target_pointer_width = "64", any(feature = "std", feature = "alloc")))]
     assert_eq!(32, size_of::<TinyStrAuto>());
 }
 
