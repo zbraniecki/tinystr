@@ -7,7 +7,7 @@ mod helpers;
 
 pub use error::Error;
 
-use std::num::{NonZeroU32, NonZeroU64, NonZeroU128};
+use std::num::{NonZeroU128, NonZeroU32, NonZeroU64};
 
 #[inline(always)]
 pub fn try_u32_from_bytes(bytes: &[u8]) -> Result<NonZeroU32, Error> {
@@ -25,7 +25,12 @@ pub fn try_u32_from_bytes(bytes: &[u8]) -> Result<NonZeroU32, Error> {
 #[test]
 fn test_u32_from_bytes() {
     assert_eq!(
-        NonZeroU32::new(0x62626161).unwrap(),
+        NonZeroU32::new(if cfg!(target_endian = "little") {
+            0x62626161
+        } else {
+            0x61616262
+        })
+        .unwrap(),
         try_u32_from_bytes(b"aabb").unwrap()
     );
 }
@@ -37,15 +42,18 @@ pub fn try_u64_from_bytes(bytes: &[u8]) -> Result<NonZeroU64, Error> {
         return Err(Error::InvalidSize);
     }
     let mask = 0x80808080_80808080u64 >> (8 * (8 - len));
-    unsafe {
-        helpers::make_u64_bytes(bytes, len, mask)
-    }
+    unsafe { helpers::make_u64_bytes(bytes, len, mask) }
 }
 
 #[test]
 fn test_u64_from_bytes() {
     assert_eq!(
-        NonZeroU64::new(0x6262626261616161).unwrap(),
+        NonZeroU64::new(if cfg!(target_endian = "little") {
+            0x6262626261616161
+        } else {
+            0x6161616162626262
+        })
+        .unwrap(),
         try_u64_from_bytes(b"aaaabbbb").unwrap()
     );
 }
@@ -57,15 +65,18 @@ pub fn try_u128_from_bytes(bytes: &[u8]) -> Result<NonZeroU128, Error> {
         return Err(Error::InvalidSize);
     }
     let mask = 0x80808080_80808080_80808080_80808080u128 >> (8 * (16 - len));
-    unsafe {
-        helpers::make_u128_bytes(bytes, len, mask)
-    }
+    unsafe { helpers::make_u128_bytes(bytes, len, mask) }
 }
 
 #[test]
 fn test_u128_from_bytes() {
     assert_eq!(
-        NonZeroU128::new(0x62626262626262626161616161616161).unwrap(),
+        NonZeroU128::new(if cfg!(target_endian = "little") {
+            0x62626262626262626161616161616161
+        } else {
+            0x61616161616161616262626262626262
+        })
+        .unwrap(),
         try_u128_from_bytes(b"aaaaaaaabbbbbbbb").unwrap()
     );
 }

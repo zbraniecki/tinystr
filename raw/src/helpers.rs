@@ -1,4 +1,4 @@
-use std::num::{NonZeroU32, NonZeroU64, NonZeroU128};
+use std::num::{NonZeroU128, NonZeroU32, NonZeroU64};
 use std::ptr::copy_nonoverlapping;
 
 use super::Error;
