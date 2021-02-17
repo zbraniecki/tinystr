@@ -33,6 +33,7 @@ alloc = []
 [[bench]]
 name = "construct"
 harness = false
+required-features = ["std"]
 
 [[bench]]
 name = "tinystr"
