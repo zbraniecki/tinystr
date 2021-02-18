@@ -26,9 +26,9 @@ pub fn try_u32_from_bytes(bytes: &[u8]) -> Result<NonZeroU32, Error> {
 fn test_u32_from_bytes() {
     assert_eq!(
         NonZeroU32::new(if cfg!(target_endian = "little") {
-            0x62626161
+            0x6262_6161
         } else {
-            0x61616262
+            0x6161_6262
         })
         .unwrap(),
         try_u32_from_bytes(b"aabb").unwrap()
@@ -38,10 +38,10 @@ fn test_u32_from_bytes() {
 #[inline(always)]
 pub fn try_u64_from_bytes(bytes: &[u8]) -> Result<NonZeroU64, Error> {
     let len = bytes.len();
-    if len < 1 || len > 8 {
+    if !(1..=8).contains(&len) {
         return Err(Error::InvalidSize);
     }
-    let mask = 0x80808080_80808080u64 >> (8 * (8 - len));
+    let mask = 0x8080_8080_8080_8080_u64 >> (8 * (8 - len));
     unsafe { helpers::make_u64_bytes(bytes, len, mask) }
 }
 
@@ -49,9 +49,9 @@ pub fn try_u64_from_bytes(bytes: &[u8]) -> Result<NonZeroU64, Error> {
 fn test_u64_from_bytes() {
     assert_eq!(
         NonZeroU64::new(if cfg!(target_endian = "little") {
-            0x6262626261616161
+            0x6262_6262_6161_6161
         } else {
-            0x6161616162626262
+            0x6161_6161_6262_6262
         })
         .unwrap(),
         try_u64_from_bytes(b"aaaabbbb").unwrap()
@@ -61,10 +61,10 @@ fn test_u64_from_bytes() {
 #[inline(always)]
 pub fn try_u128_from_bytes(bytes: &[u8]) -> Result<NonZeroU128, Error> {
     let len = bytes.len();
-    if len < 1 || len > 16 {
+    if !(1..=16).contains(&len) {
         return Err(Error::InvalidSize);
     }
-    let mask = 0x80808080_80808080_80808080_80808080u128 >> (8 * (16 - len));
+    let mask = 0x8080_8080_8080_8080_8080_8080_8080_8080_u128 >> (8 * (16 - len));
     unsafe { helpers::make_u128_bytes(bytes, len, mask) }
 }
 
@@ -72,9 +72,9 @@ pub fn try_u128_from_bytes(bytes: &[u8]) -> Result<NonZeroU128, Error> {
 fn test_u128_from_bytes() {
     assert_eq!(
         NonZeroU128::new(if cfg!(target_endian = "little") {
-            0x62626262626262626161616161616161
+            0x6262_6262_6262_6262_6161_6161_6161_6161
         } else {
-            0x61616161616161616262626262626262
+            0x6161_6161_6161_6161_6262_6262_6262_6262
         })
         .unwrap(),
         try_u128_from_bytes(b"aaaaaaaabbbbbbbb").unwrap()
