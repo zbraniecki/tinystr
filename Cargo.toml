@@ -3,8 +3,13 @@ name = "tinystr"
 description = """
 A small ASCII-only bounded length string representation.
 """
-version = "0.4.2"
-authors = ["Raph Levien <raph.levien@gmail.com>", "Zibi Braniecki <zibi@braniecki.net>", "Shane F. Carr <shane@sffc.xyz>"]
+version = "0.4.3"
+authors = [
+    "Raph Levien <raph.levien@gmail.com>",
+    "Zibi Braniecki <zibi@braniecki.net>",
+    "Shane F. Carr <shane@sffc.xyz>",
+    "Manish Goregaokar <manishsmail@gmail.com>"
+]
 edition = "2018"
 license = "Apache-2.0/MIT"
 repository = "https://github.com/zbraniecki/tinystr"
@@ -15,7 +20,7 @@ categories = ["data-structures"]
 [dependencies]
 serde = { version = "1.0.123", optional = true }
 tinystr-macros = { version = "0.2", path = "./macros" }
-tinystr-raw = { version = "0.1", path = "./raw" }
+tinystr-raw = { version = "0.1.1", path = "./raw" }
 
 [dev-dependencies]
 criterion = "0.3"

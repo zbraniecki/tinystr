@@ -4,6 +4,15 @@
 
   - …
 
+## tinystr 0.4.3 (February 18, 2021)
+
+  - Implement `Error` for errors.
+  - Implement `serde` support.
+
+## tinystr 0.4.2 (January 14, 2021)
+
+  - Add `repr(transparent)`.
+
 ## tinystr 0.4.1 (October 13, 2020)
 
   - Improve macro re-export.
