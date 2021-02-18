@@ -1,5 +1,4 @@
 use std::cmp::Ordering;
-use std::convert::Into;
 use std::fmt;
 use std::num::NonZeroU128;
 use std::ops::Deref;
@@ -131,11 +130,11 @@ impl TinyStr16 {
     /// ```
     pub const fn is_ascii_alphabetic(self) -> bool {
         let word = self.0.get();
-        let mask =
-            (word + 0x7f7f7f7f_7f7f7f7f_7f7f7f7f_7f7f7f7f) & 0x80808080_80808080_80808080_80808080;
-        let lower = word | 0x20202020_20202020_20202020_20202020;
-        let alpha = !(lower + 0x1f1f1f1f_1f1f1f1f_1f1f1f1f_1f1f1f1f)
-            | (lower + 0x05050505_05050505_05050505_05050505);
+        let mask = (word + 0x7f7f_7f7f_7f7f_7f7f_7f7f_7f7f_7f7f_7f7f)
+            & 0x8080_8080_8080_8080_8080_8080_8080_8080;
+        let lower = word | 0x2020_2020_2020_2020_2020_2020_2020_2020;
+        let alpha = !(lower + 0x1f1f_1f1f_1f1f_1f1f_1f1f_1f1f_1f1f_1f1f)
+            | (lower + 0x0505_0505_0505_0505_0505_0505_0505_0505);
         (alpha & mask) == 0
     }
 
@@ -160,13 +159,13 @@ impl TinyStr16 {
     /// ```
     pub const fn is_ascii_alphanumeric(self) -> bool {
         let word = self.0.get();
-        let mask =
-            (word + 0x7f7f7f7f_7f7f7f7f_7f7f7f7f_7f7f7f7f) & 0x80808080_80808080_80808080_80808080;
-        let numeric = !(word + 0x50505050_50505050_50505050_50505050)
-            | (word + 0x46464646_46464646_46464646_46464646);
-        let lower = word | 0x20202020_20202020_20202020_20202020;
-        let alpha = !(lower + 0x1f1f1f1f_1f1f1f1f_1f1f1f1f_1f1f1f1f)
-            | (lower + 0x05050505_05050505_05050505_05050505);
+        let mask = (word + 0x7f7f_7f7f_7f7f_7f7f_7f7f_7f7f_7f7f_7f7f)
+            & 0x8080_8080_8080_8080_8080_8080_8080_8080;
+        let numeric = !(word + 0x5050_5050_5050_5050_5050_5050_5050_5050)
+            | (word + 0x4646_4646_4646_4646_4646_4646_4646_4646);
+        let lower = word | 0x2020_2020_2020_2020_2020_2020_2020_2020;
+        let alpha = !(lower + 0x1f1f_1f1f_1f1f_1f1f_1f1f_1f1f_1f1f_1f1f)
+            | (lower + 0x0505_0505_0505_0505_0505_0505_0505_0505);
         (alpha & numeric & mask) == 0
     }
 
@@ -189,10 +188,10 @@ impl TinyStr16 {
     /// ```
     pub const fn is_ascii_numeric(self) -> bool {
         let word = self.0.get();
-        let mask =
-            (word + 0x7f7f7f7f_7f7f7f7f_7f7f7f7f_7f7f7f7f) & 0x80808080_80808080_80808080_80808080;
-        let numeric = !(word + 0x50505050_50505050_50505050_50505050)
-            | (word + 0x46464646_46464646_46464646_46464646);
+        let mask = (word + 0x7f7f_7f7f_7f7f_7f7f_7f7f_7f7f_7f7f_7f7f)
+            & 0x8080_8080_8080_8080_8080_8080_8080_8080;
+        let numeric = !(word + 0x5050_5050_5050_5050_5050_5050_5050_5050)
+            | (word + 0x4646_4646_4646_4646_4646_4646_4646_4646);
         (numeric & mask) == 0
     }
 
@@ -213,9 +212,9 @@ impl TinyStr16 {
     pub const fn to_ascii_lowercase(self) -> Self {
         let word = self.0.get();
         let result = word
-            | (((word + 0x3f3f3f3f_3f3f3f3f_3f3f3f3f_3f3f3f3f)
-                & !(word + 0x25252525_25252525_25252525_25252525)
-                & 0x80808080_80808080_80808080_80808080)
+            | (((word + 0x3f3f_3f3f_3f3f_3f3f_3f3f_3f3f_3f3f_3f3f)
+                & !(word + 0x2525_2525_2525_2525_2525_2525_2525_2525)
+                & 0x8080_8080_8080_8080_8080_8080_8080_8080)
                 >> 2);
         unsafe { Self(NonZeroU128::new_unchecked(result)) }
     }
@@ -237,9 +236,9 @@ impl TinyStr16 {
     /// ```
     pub const fn to_ascii_titlecase(self) -> Self {
         let word = self.0.get().to_le();
-        let mask = ((word + 0x3f3f3f3f_3f3f3f3f_3f3f3f3f_3f3f3f1f)
-            & !(word + 0x25252525_25252525_25252525_25252505)
-            & 0x80808080_80808080_80808080_80808080)
+        let mask = ((word + 0x3f3f_3f3f_3f3f_3f3f_3f3f_3f3f_3f3f_3f1f)
+            & !(word + 0x2525_2525_2525_2525_2525_2525_2525_2505)
+            & 0x8080_8080_8080_8080_8080_8080_8080_8080)
             >> 2;
         let result = (word | mask) & !(0x20 & mask);
         unsafe { Self(NonZeroU128::new_unchecked(u128::from_le(result))) }
@@ -262,9 +261,9 @@ impl TinyStr16 {
     pub const fn to_ascii_uppercase(self) -> Self {
         let word = self.0.get();
         let result = word
-            & !(((word + 0x1f1f1f1f_1f1f1f1f_1f1f1f1f_1f1f1f1f)
-                & !(word + 0x05050505_05050505_05050505_05050505)
-                & 0x80808080_80808080_80808080_80808080)
+            & !(((word + 0x1f1f_1f1f_1f1f_1f1f_1f1f_1f1f_1f1f_1f1f)
+                & !(word + 0x0505_0505_0505_0505_0505_0505_0505_0505)
+                & 0x8080_8080_8080_8080_8080_8080_8080_8080)
                 >> 2);
         unsafe { Self(NonZeroU128::new_unchecked(result)) }
     }
@@ -324,9 +323,9 @@ impl FromStr for TinyStr16 {
     }
 }
 
-impl Into<u128> for TinyStr16 {
-    fn into(self) -> u128 {
-        self.0.get().to_le()
+impl From<TinyStr16> for u128 {
+    fn from(input: TinyStr16) -> Self {
+        input.0.get().to_le()
     }
 }
 

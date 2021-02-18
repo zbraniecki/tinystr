@@ -76,7 +76,7 @@ fn construct_from_str(c: &mut Criterion) {
                 })
             }
         };
-    };
+    }
 
     bench_block!(c, "construct_from_str", cfs);
 }
@@ -93,7 +93,7 @@ fn construct_from_bytes(c: &mut Criterion) {
                 })
             }
         };
-    };
+    }
 
     let funcs = vec![
         Fun::new("TinyStr4", cfu!(TinyStr4)),
@@ -130,7 +130,7 @@ fn construct_unchecked(c: &mut Criterion) {
                 })
             }
         };
-    };
+    }
 
     let funcs = vec![Fun::new("TinyStr4", cu!(TinyStr4, u32))];
 

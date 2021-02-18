@@ -501,7 +501,7 @@ fn tiny16_debug() {
 #[test]
 fn supports_std_error() {
     let e = "\u{4000}".parse::<TinyStr8>().unwrap_err();
-    let _ : &dyn std::error::Error = &e;
+    let _: &dyn std::error::Error = &e;
 }
 
 #[cfg(any(feature = "std", feature = "alloc"))]

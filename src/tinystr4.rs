@@ -1,5 +1,4 @@
 use std::cmp::Ordering;
-use std::convert::Into;
 use std::fmt;
 use std::num::NonZeroU32;
 use std::ops::Deref;
@@ -306,9 +305,9 @@ impl FromStr for TinyStr4 {
     }
 }
 
-impl Into<u32> for TinyStr4 {
-    fn into(self) -> u32 {
-        self.0.get().to_le()
+impl From<TinyStr4> for u32 {
+    fn from(input: TinyStr4) -> Self {
+        input.0.get().to_le()
     }
 }
 

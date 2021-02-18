@@ -100,25 +100,25 @@ macro_rules! serde_impl {
             where
                 D: serde::Deserializer<'de>,
             {
-                use std::borrow::Cow;
                 use serde::de::Error as SerdeError;
+                use std::borrow::Cow;
                 use std::string::ToString;
 
                 if deserializer.is_human_readable() {
                     let x: Cow<'de, str> = serde::Deserialize::deserialize(deserializer)?;
-                    x.parse().map_err(|e: Error| SerdeError::custom(e.to_string()))
+                    x.parse()
+                        .map_err(|e: Error| SerdeError::custom(e.to_string()))
                 } else {
                     // little-endian
                     let le = serde::Deserialize::deserialize(deserializer)?;
                     let bytes = $int::from_le(le).to_ne_bytes();
-                    let bytes = bytes.split(|t| *t == 0).next()
-                                     .ok_or_else(|| SerdeError::custom(concat!("Empty string found for ",
-                                                                               stringify!($ty))))?;
+                    let bytes = bytes.split(|t| *t == 0).next().ok_or_else(|| {
+                        SerdeError::custom(concat!("Empty string found for ", stringify!($ty)))
+                    })?;
                     <$ty>::from_bytes(&bytes).map_err(|e| SerdeError::custom(e.to_string()))
                 }
             }
         }
-
     };
 }
 #[test]
