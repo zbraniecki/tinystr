@@ -3,7 +3,6 @@ use criterion::criterion_group;
 use criterion::criterion_main;
 use criterion::Bencher;
 use criterion::Criterion;
-use criterion::Fun;
 
 use tinystr::{TinyStr16, TinyStr4, TinyStr8};
 
@@ -36,36 +35,30 @@ static STRINGS_16: &[&str] = &[
 
 macro_rules! bench_block {
     ($c:expr, $name:expr, $action:ident) => {
-        let funcs = vec![
-            Fun::new("String", $action!(String)),
-            Fun::new("TinyStr4", $action!(TinyStr4)),
-            Fun::new("TinyStr8", $action!(TinyStr8)),
-            Fun::new("TinyStr16", $action!(TinyStr16)),
-        ];
+        let mut group4 = $c.benchmark_group(&format!("{}/4", $name));
+        group4.bench_function("String", $action!(String, STRINGS_4));
+        group4.bench_function("TinyStr4", $action!(TinyStr4, STRINGS_4));
+        group4.bench_function("TinyStr8", $action!(TinyStr8, STRINGS_4));
+        group4.bench_function("TinyStr16", $action!(TinyStr16, STRINGS_4));
+        group4.finish();
 
-        $c.bench_functions(&format!("{}/4", $name), funcs, STRINGS_4);
+        let mut group8 = $c.benchmark_group(&format!("{}/8", $name));
+        group8.bench_function("String", $action!(String, STRINGS_8));
+        group8.bench_function("TinyStr8", $action!(TinyStr8, STRINGS_8));
+        group8.bench_function("TinyStr16", $action!(TinyStr16, STRINGS_8));
+        group8.finish();
 
-        let funcs = vec![
-            Fun::new("String", $action!(String)),
-            Fun::new("TinyStr8", $action!(TinyStr8)),
-            Fun::new("TinyStr16", $action!(TinyStr16)),
-        ];
-
-        $c.bench_functions(&format!("{}/8", $name), funcs, STRINGS_8);
-
-        let funcs = vec![
-            Fun::new("String", $action!(String)),
-            Fun::new("TinyStr16", $action!(TinyStr16)),
-        ];
-
-        $c.bench_functions(&format!("{}/16", $name), funcs, STRINGS_16);
+        let mut group16 = $c.benchmark_group(&format!("{}/16", $name));
+        group16.bench_function("String", $action!(String, STRINGS_16));
+        group16.bench_function("TinyStr16", $action!(TinyStr16, STRINGS_16));
+        group16.finish();
     };
 }
 
 macro_rules! convert_to_ascii {
-    ($ty:ty, $action:ident) => {
-        |b: &mut Bencher, inputs: &&[&str]| {
-            let raw: Vec<$ty> = inputs.iter().map(|s| s.parse::<$ty>().unwrap()).collect();
+    ($ty:ty, $action:ident, $inputs:expr) => {
+        |b: &mut Bencher| {
+            let raw: Vec<$ty> = $inputs.iter().map(|s| s.parse::<$ty>().unwrap()).collect();
             b.iter(move || {
                 for s in &raw {
                     let _ = black_box(s.$action());
@@ -77,8 +70,8 @@ macro_rules! convert_to_ascii {
 
 fn convert_to_ascii_lowercase(c: &mut Criterion) {
     macro_rules! ctal {
-        ($ty:ty) => {
-            convert_to_ascii!($ty, to_ascii_lowercase)
+        ($ty:ty, $inputs:expr) => {
+            convert_to_ascii!($ty, to_ascii_lowercase, $inputs)
         };
     }
 
@@ -87,8 +80,8 @@ fn convert_to_ascii_lowercase(c: &mut Criterion) {
 
 fn convert_to_ascii_uppercase(c: &mut Criterion) {
     macro_rules! ctau {
-        ($ty:ty) => {
-            convert_to_ascii!($ty, to_ascii_uppercase)
+        ($ty:ty, $inputs:expr) => {
+            convert_to_ascii!($ty, to_ascii_uppercase, $inputs)
         };
     }
 
@@ -109,8 +102,8 @@ impl ExtToAsciiTitlecase for str {
 
 fn convert_to_ascii_titlecase(c: &mut Criterion) {
     macro_rules! ctat {
-        ($ty:ty) => {
-            convert_to_ascii!($ty, to_ascii_titlecase)
+        ($ty:ty, $inputs:expr) => {
+            convert_to_ascii!($ty, to_ascii_titlecase, $inputs)
         };
     }
 
@@ -129,9 +122,9 @@ impl ExtIsAsciiAlphanumeric for str {
 
 fn test_is_ascii_alphanumeric(c: &mut Criterion) {
     macro_rules! tiaa {
-        ($ty:ty) => {
-            |b: &mut Bencher, inputs: &&[&str]| {
-                let raw: Vec<$ty> = inputs.iter().map(|s| s.parse::<$ty>().unwrap()).collect();
+        ($ty:ty, $inputs:expr) => {
+            |b: &mut Bencher| {
+                let raw: Vec<$ty> = $inputs.iter().map(|s| s.parse::<$ty>().unwrap()).collect();
                 b.iter(move || {
                     for s in &raw {
                         let _ = black_box(s.is_ascii_alphanumeric());
@@ -146,9 +139,9 @@ fn test_is_ascii_alphanumeric(c: &mut Criterion) {
 
 fn test_eq(c: &mut Criterion) {
     macro_rules! te {
-        ($ty:ty) => {
-            |b: &mut Bencher, inputs: &&[&str]| {
-                let raw: Vec<$ty> = inputs.iter().map(|s| s.parse::<$ty>().unwrap()).collect();
+        ($ty:ty, $inputs:expr) => {
+            |b: &mut Bencher| {
+                let raw: Vec<$ty> = $inputs.iter().map(|s| s.parse::<$ty>().unwrap()).collect();
                 b.iter(move || {
                     for s in &raw {
                         for l in &raw {
