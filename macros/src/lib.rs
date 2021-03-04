@@ -18,8 +18,7 @@ fn get_value_from_token_stream(input: TokenStream) -> String {
 #[proc_macro]
 pub fn u32_from_bytes(input: TokenStream) -> TokenStream {
     let s = get_value_from_token_stream(input);
-    let u = tinystr_raw::try_u32_from_bytes(s.as_bytes())
-        .expect(&s);
+    let u = tinystr_raw::try_u32_from_bytes(s.as_bytes()).expect(&s);
     TokenTree::from(Literal::u32_suffixed(u.into())).into()
 }
 

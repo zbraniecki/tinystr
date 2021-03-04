@@ -49,6 +49,11 @@ harness = false
 name = "match"
 harness = false
 
+[[bench]]
+name = "binarysearch"
+harness = false
+required-features = ["std"]
+
 [[test]]
 name = "serde"
 required-features = ["serde"]
