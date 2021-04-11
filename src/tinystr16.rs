@@ -270,6 +270,7 @@ impl TinyStr16 {
 }
 
 impl fmt::Display for TinyStr16 {
+    #[inline(always)]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.deref())
     }
@@ -297,20 +298,23 @@ impl Deref for TinyStr16 {
 }
 
 impl PartialEq<&str> for TinyStr16 {
+    #[inline(always)]
     fn eq(&self, other: &&str) -> bool {
         self.deref() == *other
     }
 }
 
 impl PartialOrd for TinyStr16 {
+    #[inline(always)]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
 impl Ord for TinyStr16 {
+    #[inline(always)]
     fn cmp(&self, other: &Self) -> Ordering {
-        self.0.get().to_be().cmp(&other.0.get().to_be())
+        self.0.get().to_le().cmp(&other.0.get().to_le()).reverse()
     }
 }
 

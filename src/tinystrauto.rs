@@ -35,6 +35,7 @@ pub enum TinyStrAuto {
 }
 
 impl fmt::Display for TinyStrAuto {
+    #[inline(always)]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.deref().fmt(f)
     }
@@ -43,6 +44,7 @@ impl fmt::Display for TinyStrAuto {
 impl Deref for TinyStrAuto {
     type Target = str;
 
+    #[inline(always)]
     fn deref(&self) -> &str {
         use TinyStrAuto::*;
         match self {
@@ -53,6 +55,7 @@ impl Deref for TinyStrAuto {
 }
 
 impl PartialEq<&str> for TinyStrAuto {
+    #[inline(always)]
     fn eq(&self, other: &&str) -> bool {
         self.deref() == *other
     }
@@ -63,18 +66,11 @@ impl FromStr for TinyStrAuto {
 
     fn from_str(text: &str) -> Result<Self, Self::Err> {
         if text.len() <= 16 {
-            match TinyStr16::from_str(text) {
-                Ok(result) => Ok(TinyStrAuto::Tiny(result)),
-                Err(err) => Err(err),
-            }
+            TinyStr16::from_str(text).map(TinyStrAuto::Tiny)
+        } else if text.is_ascii() {
+            Ok(TinyStrAuto::Heap(text.into()))
         } else {
-            if !text.is_ascii() {
-                return Err(Error::NonAscii);
-            }
-            match String::from_str(text) {
-                Ok(result) => Ok(TinyStrAuto::Heap(result)),
-                Err(_) => unreachable!(),
-            }
+            Err(Error::NonAscii)
         }
     }
 }
