@@ -296,7 +296,7 @@ impl PartialOrd for TinyStr4 {
 impl Ord for TinyStr4 {
     #[inline(always)]
     fn cmp(&self, other: &Self) -> Ordering {
-        self.0.get().to_be().cmp(&other.0.get().to_be())
+        self.0.get().to_le().cmp(&other.0.get().to_le()).reverse()
     }
 }
 
