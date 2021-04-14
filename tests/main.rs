@@ -539,6 +539,8 @@ fn tiny16_ord() {
     let mut v: Vec<TinyStr16> = vec![
         tinystr16!("nedis_xxxx"),
         tinystr16!("macos_xxxx"),
+        tinystr16!("xxxxxxxx_b"),
+        tinystr16!("xxxxxxxx_aa"),
         tinystr16!("zzy"),
         tinystr16!("aab"),
     ];
@@ -546,7 +548,9 @@ fn tiny16_ord() {
     assert_eq!(Some("aab"), v.get(0).map(TinyStr16::as_str));
     assert_eq!(Some("macos_xxxx"), v.get(1).map(TinyStr16::as_str));
     assert_eq!(Some("nedis_xxxx"), v.get(2).map(TinyStr16::as_str));
-    assert_eq!(Some("zzy"), v.get(3).map(TinyStr16::as_str));
+    assert_eq!(Some("xxxxxxxx_aa"), v.get(3).map(TinyStr16::as_str));
+    assert_eq!(Some("xxxxxxxx_b"), v.get(4).map(TinyStr16::as_str));
+    assert_eq!(Some("zzy"), v.get(5).map(TinyStr16::as_str));
 }
 
 /// Test consistency of TinyStr Ord with String
