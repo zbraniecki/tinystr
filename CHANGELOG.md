@@ -4,6 +4,10 @@
 
   - …
 
+## tinystr 0.4.4 (April 14, 2021)
+
+  - Inline more methods to reduce instruction count. In particular, speed up `binary_search`
+
 ## tinystr 0.4.3 (February 18, 2021)
 
   - Implement `Error` for errors.
