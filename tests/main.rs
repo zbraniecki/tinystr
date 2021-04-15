@@ -1,10 +1,37 @@
+use rand::SeedableRng;
+use rand_distr::{Alphanumeric, Distribution, Uniform};
+use rand_pcg::Lcg64Xsh32;
 use std::fmt::Write;
 use std::mem::size_of;
 use std::ops::Deref;
-use tinystr::{Error, TinyStr16, TinyStr4, TinyStr8};
+use std::ops::RangeInclusive;
+use tinystr::{tinystr16, tinystr4, tinystr8, Error, TinyStr16, TinyStr4, TinyStr8};
 
 #[cfg(any(feature = "std", feature = "alloc"))]
 use tinystr::TinyStrAuto;
+
+/// Generates an array of random alphanumeric strings.
+///
+/// - length = range of lengths for the strings (chosen uniformly at random)
+/// - count = number of strings to generate
+fn random_alphanums(lengths: RangeInclusive<usize>, count: usize) -> Vec<String> {
+    // Lcg64Xsh32 is a small, fast PRNG.
+    let mut rng1 = Lcg64Xsh32::seed_from_u64(2021);
+    let mut rng2 = Lcg64Xsh32::seed_from_u64(rand::Rng::gen(&mut rng1));
+    let alpha_dist = Alphanumeric;
+    let len_dist = Uniform::from(lengths);
+    len_dist
+        .sample_iter(&mut rng1)
+        .take(count)
+        .map(|len| {
+            (&alpha_dist)
+                .sample_iter(&mut rng2)
+                .take(len)
+                .map(char::from)
+                .collect::<String>()
+        })
+        .collect()
+}
 
 #[test]
 fn tiny_sizes() {
@@ -135,11 +162,33 @@ fn tiny4_titlecase() {
 
 #[test]
 fn tiny4_ord() {
-    let mut v: Vec<TinyStr4> = vec!["zh".parse().unwrap(), "fr".parse().unwrap()];
+    let mut v: Vec<TinyStr4> = vec![
+        tinystr4!("zh"),
+        tinystr4!("aab"),
+        tinystr4!("zzy"),
+        tinystr4!("fr"),
+    ];
     v.sort();
+    assert_eq!(Some("aab"), v.get(0).map(TinyStr4::as_str));
+    assert_eq!(Some("fr"), v.get(1).map(TinyStr4::as_str));
+    assert_eq!(Some("zh"), v.get(2).map(TinyStr4::as_str));
+    assert_eq!(Some("zzy"), v.get(3).map(TinyStr4::as_str));
+}
 
-    assert_eq!(v.get(0).unwrap().as_str(), "fr");
-    assert_eq!(v.get(1).unwrap().as_str(), "zh");
+/// Test consistency of TinyStr Ord with String
+#[test]
+fn tinystr4_ord_consistency() {
+    let mut string_vec = random_alphanums(2..=4, 100);
+    let mut tinystr_vec: Vec<TinyStr4> = string_vec.iter().map(|s| s.parse().unwrap()).collect();
+    string_vec.sort();
+    tinystr_vec.sort();
+    assert_eq!(
+        string_vec,
+        tinystr_vec
+            .iter()
+            .map(|s| s.as_str().to_string())
+            .collect::<Vec<String>>()
+    );
 }
 
 #[test]
@@ -293,11 +342,33 @@ fn tiny8_titlecase() {
 
 #[test]
 fn tiny8_ord() {
-    let mut v: Vec<TinyStr8> = vec!["nedis".parse().unwrap(), "macos".parse().unwrap()];
+    let mut v: Vec<TinyStr8> = vec![
+        tinystr8!("nedis"),
+        tinystr8!("macos"),
+        tinystr8!("zzy"),
+        tinystr8!("aab"),
+    ];
     v.sort();
+    assert_eq!(Some("aab"), v.get(0).map(TinyStr8::as_str));
+    assert_eq!(Some("macos"), v.get(1).map(TinyStr8::as_str));
+    assert_eq!(Some("nedis"), v.get(2).map(TinyStr8::as_str));
+    assert_eq!(Some("zzy"), v.get(3).map(TinyStr8::as_str));
+}
 
-    assert_eq!(v.get(0).unwrap().as_str(), "macos");
-    assert_eq!(v.get(1).unwrap().as_str(), "nedis");
+/// Test consistency of TinyStr Ord with String
+#[test]
+fn tinystr8_ord_consistency() {
+    let mut string_vec = random_alphanums(3..=8, 100);
+    let mut tinystr_vec: Vec<TinyStr8> = string_vec.iter().map(|s| s.parse().unwrap()).collect();
+    string_vec.sort();
+    tinystr_vec.sort();
+    assert_eq!(
+        string_vec,
+        tinystr_vec
+            .iter()
+            .map(|s| s.as_str().to_string())
+            .collect::<Vec<String>>()
+    );
 }
 
 #[test]
@@ -465,11 +536,37 @@ fn tiny16_titlecase() {
 
 #[test]
 fn tiny16_ord() {
-    let mut v: Vec<TinyStr16> = vec!["nedis_xxxx".parse().unwrap(), "macos_xxxx".parse().unwrap()];
+    let mut v: Vec<TinyStr16> = vec![
+        tinystr16!("nedis_xxxx"),
+        tinystr16!("macos_xxxx"),
+        tinystr16!("xxxxxxxx_b"),
+        tinystr16!("xxxxxxxx_aa"),
+        tinystr16!("zzy"),
+        tinystr16!("aab"),
+    ];
     v.sort();
+    assert_eq!(Some("aab"), v.get(0).map(TinyStr16::as_str));
+    assert_eq!(Some("macos_xxxx"), v.get(1).map(TinyStr16::as_str));
+    assert_eq!(Some("nedis_xxxx"), v.get(2).map(TinyStr16::as_str));
+    assert_eq!(Some("xxxxxxxx_aa"), v.get(3).map(TinyStr16::as_str));
+    assert_eq!(Some("xxxxxxxx_b"), v.get(4).map(TinyStr16::as_str));
+    assert_eq!(Some("zzy"), v.get(5).map(TinyStr16::as_str));
+}
 
-    assert_eq!(v.get(0).unwrap().as_str(), "macos_xxxx");
-    assert_eq!(v.get(1).unwrap().as_str(), "nedis_xxxx");
+/// Test consistency of TinyStr Ord with String
+#[test]
+fn tinystr16_ord_consistency() {
+    let mut string_vec = random_alphanums(1..=16, 100);
+    let mut tinystr_vec: Vec<TinyStr16> = string_vec.iter().map(|s| s.parse().unwrap()).collect();
+    string_vec.sort();
+    tinystr_vec.sort();
+    assert_eq!(
+        string_vec,
+        tinystr_vec
+            .iter()
+            .map(|s| s.as_str().to_string())
+            .collect::<Vec<String>>()
+    );
 }
 
 #[test]

@@ -314,7 +314,7 @@ impl PartialOrd for TinyStr16 {
 impl Ord for TinyStr16 {
     #[inline(always)]
     fn cmp(&self, other: &Self) -> Ordering {
-        self.0.get().to_le().cmp(&other.0.get().to_le()).reverse()
+        self.0.get().to_ne_bytes().cmp(&other.0.get().to_ne_bytes())
     }
 }
 
