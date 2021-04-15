@@ -4,7 +4,12 @@
 
   - …
 
-## tinystr 0.4.4 (April 14, 2021)
+## tinystr 0.4.5 (April 14, 2021)
+
+  - Fix `Ord` implementation to follow `str` sorting.
+
+
+## tinystr 0.4.4 (April 14, 2021) (yanked)
 
   - Inline more methods to reduce instruction count. In particular, speed up `binary_search`
 
