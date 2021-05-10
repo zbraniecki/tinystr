@@ -88,7 +88,10 @@ impl TinyStr16 {
         self.deref()
     }
 
-    /// Gets a representation of this TinyStr16 as a primitive.
+    /// Gets a representation of this TinyStr16 as a primitive, valid for the
+    /// current machine. This value is not necessarily compatible with
+    /// [`TinyStr16::new_unchecked()`], use [`TinyStr16::from_native_unchecked()`]
+    /// instead.
     ///
     /// # Examples
     ///
@@ -108,6 +111,36 @@ impl TinyStr16 {
     /// ```
     pub const fn as_unsigned(&self) -> u128 {
         self.0.get()
+    }
+
+    /// An unsafe constructor intended for cases where the consumer
+    /// guarantees that the input is a native endian integer which
+    /// is a correct representation of a `TinyStr16` string
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyStr16;
+    ///
+    /// let s1: TinyStr16 = "Test".parse()
+    ///     .expect("Failed to parse.");
+    ///
+    /// let num: u128 = s1.as_unsigned();
+    ///
+    /// let s2 = unsafe { TinyStr16::new_unchecked(num) };
+    ///
+    /// assert_eq!(s1, s2);
+    /// assert_eq!(s2.as_str(), "Test");
+    /// ```
+    ///
+    /// # Safety
+    ///
+    /// The method does not validate the `u32` to be properly encoded
+    /// value for `TinyStr16`.
+    /// The value can be retrieved via [`TinyStr16::as_unsigned()`].
+    #[inline(always)]
+    pub const unsafe fn from_native_unchecked(text: u128) -> Self {
+        Self(NonZeroU128::new_unchecked(text))
     }
 
     /// Checks if the value is composed of ASCII alphabetic characters:
