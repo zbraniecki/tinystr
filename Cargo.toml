@@ -41,6 +41,9 @@ std = [ "tinystr-raw/std" ]
 # Use the `alloc` crate. Enables TinyStrAuto. This feature does nothing if std is enabled.
 alloc = []
 
+[package.metadata.docs.rs]
+all-features = true
+
 [[bench]]
 name = "construct"
 harness = false
