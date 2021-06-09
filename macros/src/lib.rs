@@ -12,6 +12,9 @@ fn get_value_from_token_stream(input: TokenStream) -> String {
     if !val.starts_with('"') && !val.ends_with('"') {
         panic!("Expected a string literal; found {:?}", input);
     }
+    if val.contains('\\') {
+        panic!("Backslash escapes are not supported");
+    }
     (&val[1..val.len() - 1]).to_string()
 }
 
