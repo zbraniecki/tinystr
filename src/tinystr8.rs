@@ -313,9 +313,11 @@ impl Deref for TinyStr8 {
 
     #[inline(always)]
     fn deref(&self) -> &str {
-        // Again, could use #cfg to hand-roll a big-endian implementation.
-        let word = self.0.get().to_le();
+        let word = self.0.get();
+        #[cfg(target_endian = "little")]
         let len = (8 - word.leading_zeros() / 8) as usize;
+        #[cfg(target_endian = "big")]
+        let len = (8 - word.trailing_zeros() / 8) as usize;
         unsafe {
             let slice = core::slice::from_raw_parts(&self.0 as *const _ as *const u8, len);
             std::str::from_utf8_unchecked(slice)
