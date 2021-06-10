@@ -1,9 +1,10 @@
 /// Macro to create a const TinyStr4, validated with zero runtime cost.
 ///
-/// The argument must be a string literal:
+/// The argument must be a string literal without Unicode Escapes:
 /// https://doc.rust-lang.org/reference/tokens.html#string-literals
+/// https://doc.rust-lang.org/stable/reference/tokens.html#unicode-escapes
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use tinystr::{tinystr4, TinyStr4};
@@ -12,6 +13,13 @@
 /// let s2: TinyStr4 = "abc".parse().unwrap();
 /// assert_eq!(S1, s2);
 /// ```
+///
+/// ```compile_fail
+/// # use tinystr::tinystr4;
+/// // This will fail to compile
+/// tinystr4!("\u{41}");
+/// ```
+
 #[macro_export]
 macro_rules! tinystr4 {
     ($s:literal) => {
@@ -22,17 +30,20 @@ macro_rules! tinystr4 {
 #[test]
 fn test_tinystr4() {
     use crate::TinyStr4;
-    const X1: TinyStr4 = tinystr4!("foo");
-    let x2: TinyStr4 = "foo".parse().unwrap();
+    const X1: TinyStr4 = tinystr4!("foo\n");
+    let x2: TinyStr4 = "foo\n".parse().unwrap();
     assert_eq!(X1, x2);
+    const X2: TinyStr4 = tinystr4!("\r\t\\\"");
+    assert_eq!("\r\t\\\"", &*X2);
 }
 
 /// Macro to create a const TinyStr8, validated with zero runtime cost.
 ///
-/// The argument must be a string literal:
+/// The argument must be a string literal without Unicode escapes:
 /// https://doc.rust-lang.org/reference/tokens.html#string-literals
+/// https://doc.rust-lang.org/stable/reference/tokens.html#unicode-escapes
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use tinystr::{tinystr8, TinyStr8};
@@ -41,6 +52,13 @@ fn test_tinystr4() {
 /// let s2: TinyStr8 = "abcdefg".parse().unwrap();
 /// assert_eq!(S1, s2);
 /// ```
+///
+/// ```compile_fail
+/// # use tinystr::tinystr8;
+/// // This will fail to compile
+/// tinystr8!("\u{41}");
+/// ```
+
 #[macro_export]
 macro_rules! tinystr8 {
     ($s:literal) => {
@@ -54,14 +72,16 @@ fn test_tinystr8() {
     const X1: TinyStr8 = tinystr8!("barbaz");
     let x2: TinyStr8 = "barbaz".parse().unwrap();
     assert_eq!(X1, x2);
+    const X2: TinyStr8 = tinystr8!("\r\n\t\\\'\"\x41");
+    assert_eq!("\r\n\t\\\'\"\x41", &*X2);
 }
 
-/// Macro to create a const TinyStr8, validated with zero runtime cost.
+/// Macro to create a const TinyStr16, validated with zero runtime cost.
 ///
-/// The argument must be a string literal:
+/// The argument must be a string literal without Unicode escapes:
 /// https://doc.rust-lang.org/reference/tokens.html#string-literals
-///
-/// # Example
+/// https://doc.rust-lang.org/stable/reference/tokens.html#unicode-escapes
+/// # Examples
 ///
 /// ```
 /// use tinystr::{tinystr16, TinyStr16};
@@ -70,6 +90,13 @@ fn test_tinystr8() {
 /// let s2: TinyStr16 = "longer-string".parse().unwrap();
 /// assert_eq!(S1, s2);
 /// ```
+///
+/// ```compile_fail
+/// # use tinystr::tinystr16;
+/// // This will fail to compile
+/// tinystr16!("\u{41}");
+/// ```
+
 #[macro_export]
 macro_rules! tinystr16 {
     ($s:literal) => {
@@ -127,4 +154,6 @@ fn test_tinystr16() {
     const X1: TinyStr16 = tinystr16!("metamorphosis");
     let x2: TinyStr16 = "metamorphosis".parse().unwrap();
     assert_eq!(X1, x2);
+    const X2: TinyStr16 = tinystr16!("\r\n\t\\\'\"\x41");
+    assert_eq!("\r\n\t\\\'\"\x41", &*X2);
 }
