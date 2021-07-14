@@ -1,5 +1,5 @@
-use std::num::{NonZeroU128, NonZeroU32, NonZeroU64};
-use std::ptr::copy_nonoverlapping;
+use core::num::{NonZeroU128, NonZeroU32, NonZeroU64};
+use core::ptr::copy_nonoverlapping;
 
 use super::Error;
 
