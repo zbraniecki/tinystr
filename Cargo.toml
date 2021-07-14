@@ -36,7 +36,7 @@ rand_distr = "0.4"
 default = [ "std" ] # Default to using the std
 
 # Use the standard library. Enables TinyStrAuto.
-std = [ "tinystr-raw/std" ]
+std = [ ]
 
 # Use the `alloc` crate. Enables TinyStrAuto. This feature does nothing if std is enabled.
 alloc = []

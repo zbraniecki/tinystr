@@ -2,12 +2,14 @@
 //!
 //! Not intended for public consumption; use `tinystr` instead.
 
+#![no_std]
+
 mod error;
 mod helpers;
 
 pub use error::Error;
 
-use std::num::{NonZeroU128, NonZeroU32, NonZeroU64};
+use core::num::{NonZeroU128, NonZeroU32, NonZeroU64};
 
 #[inline(always)]
 pub fn try_u32_from_bytes(bytes: &[u8]) -> Result<NonZeroU32, Error> {

@@ -10,9 +10,3 @@ license = "Apache-2.0/MIT"
 repository = "https://github.com/zbraniecki/tinystr"
 keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
-
-[features]
-default = [ "std" ] # Default to using the std
-
-# Use the standard library.
-std = []
