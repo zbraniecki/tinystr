@@ -101,8 +101,8 @@ macro_rules! serde_impl {
                 D: serde::Deserializer<'de>,
             {
                 use serde::de::Error as SerdeError;
-                use std::borrow::Cow;
-                use std::string::ToString;
+                use alloc::borrow::Cow;
+                use alloc::string::ToString;
 
                 if deserializer.is_human_readable() {
                     let x: Cow<'de, str> = serde::Deserialize::deserialize(deserializer)?;
