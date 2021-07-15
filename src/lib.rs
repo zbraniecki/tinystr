@@ -74,7 +74,7 @@
 //! assert_eq!(s5, "longFallbackToHeap");
 //! ```
 
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 #[cfg(any(feature = "std", test))]
 extern crate std;

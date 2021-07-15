@@ -92,8 +92,9 @@ impl<'de> serde::Deserialize<'de> for TinyStrAuto {
         D: serde::Deserializer<'de>,
     {
         use serde::de::Error as SerdeError;
-        use std::borrow::Cow;
-        use std::string::ToString;
+        use alloc::borrow::Cow;
+        #[cfg(not(feature = "std"))]
+        use alloc::string::ToString;
 
         let x: Cow<'de, str> = serde::Deserialize::deserialize(deserializer)?;
         x.parse()

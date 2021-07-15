@@ -2,7 +2,7 @@
 //!
 //! Not intended for public consumption; use `tinystr` instead.
 
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 mod error;
 mod helpers;
