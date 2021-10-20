@@ -35,18 +35,18 @@ macro_rules! impl_str_ule_size {
         impl AsULE for $tiny {
             type ULE = AsciiULE<$size>;
             #[inline]
-            fn as_unaligned(&self) -> Self::ULE {
-                (*self).into()
+            fn as_unaligned(self) -> Self::ULE {
+                self.into()
             }
             #[inline]
-            fn from_unaligned(unaligned: &Self::ULE) -> Self {
+            fn from_unaligned(unaligned: Self::ULE) -> Self {
                 unsafe {
                     // This is safe since AsciiULE guarantees that it comes from
                     // a valid TinyStr
 
                     // This converts between endiannesses twice: TinyStr::new_unchecked()
                     // takes in a native endian integer, which we produce via from_unaligned()
-                    Self::new_unchecked(<$integer>::from_unaligned(&unaligned.0))
+                    Self::new_unchecked(<$integer>::from_unaligned(unaligned.0))
                 }
             }
         }
@@ -59,10 +59,10 @@ macro_rules! impl_str_ule_size {
         }
 
         /// This impl is made available by enabling the `"zerovec"` feature of the `tinystr` crate.
-        impl ULE for AsciiULE<$size> {
+        unsafe impl ULE for AsciiULE<$size> {
             type Error = Error;
             #[inline]
-            fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
                 debug_assert!(mem::size_of::<$tiny>() == mem::size_of::<[u8; $size]>());
 
                 let data = bytes.as_ptr();
@@ -74,14 +74,7 @@ macro_rules! impl_str_ule_size {
                     let bytes = bytes.split(|t| *t == 0).next().ok_or(Error::InvalidNull)?;
                     let _ = <$tiny>::from_bytes(&*bytes)?;
                 }
-                Ok(unsafe { std::slice::from_raw_parts(data as *const Self, len) })
-            }
-            #[inline]
-            fn as_byte_slice(slice: &[Self]) -> &[u8] {
-                let data = slice.as_ptr();
-                let len = slice.len() * $size;
-                // Safe because Self is transparent over [u8; $size]
-                unsafe { std::slice::from_raw_parts(data as *const u8, len) }
+                Ok(())
             }
         }
     };
@@ -108,7 +101,8 @@ mod tests {
         assert_eq!(individually_converted, parsed_ules);
         let recouped_tinies: Vec<TinyStr8> = parsed_ules
             .iter()
-            .map(|u| TinyStr8::from_unaligned(&u))
+            .copied()
+            .map(TinyStr8::from_unaligned)
             .collect();
         assert_eq!(tinies, recouped_tinies);
     }
