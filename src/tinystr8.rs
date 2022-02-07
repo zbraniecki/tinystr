@@ -298,7 +298,7 @@ impl TinyStr8 {
 impl fmt::Display for TinyStr8 {
     #[inline(always)]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.deref())
+        self.deref().fmt(f)
     }
 }
 

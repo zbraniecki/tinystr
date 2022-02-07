@@ -287,7 +287,7 @@ impl TinyStr4 {
 impl fmt::Display for TinyStr4 {
     #[inline(always)]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.deref())
+        self.deref().fmt(f)
     }
 }
 

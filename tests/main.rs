@@ -208,6 +208,7 @@ fn tiny4_display() {
     write!(result, "{}", s).unwrap();
     assert_eq!(result, "abcd");
     assert_eq!(format!("{}", s), "abcd");
+    assert_eq!(format!("{:>8}", s), format!("{:>8}", result));
 }
 
 #[test]
@@ -388,6 +389,7 @@ fn tiny8_display() {
     write!(result, "{}", s).unwrap();
     assert_eq!(result, "abcdef");
     assert_eq!(format!("{}", s), "abcdef");
+    assert_eq!(format!("{:>8}", s), format!("{:>8}", result));
 }
 
 #[test]
@@ -586,6 +588,7 @@ fn tiny16_display() {
     write!(result, "{}", s).unwrap();
     assert_eq!(result, "abcdefghijkl");
     assert_eq!(format!("{}", s), "abcdefghijkl");
+    assert_eq!(format!("{:>14}", s), format!("{:>14}", result));
 }
 
 #[test]
